@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <title>Semana 1 - Planeamento Curricular para a Empregabilidade</title>
+</head>
+<body>
+  <h1 style="text-align: center;">Planeamento Curricular para a Empregabilidade</h1>
+  {% include 'CTCTBooster/navbar.html' %}
+  <main>
+    <section>
+      <div class="container">
+        <h2>{{ questionnaire.title }}</h2>
+        <p>{{ questionnaire.description }}</p>
+        <form action="{% url 'submit_questionnaire' %}" method="POST">
+          {% csrf_token %}
+          {% for question in questionnaire.questions.all %}
+            <div class="mb-3">
+              <label for="question_{{ question.id }}" class="form-label">{{ question.question_text }}</label>
+              {% if question.question_type == "MC" %}
+                <!-- Exemplo para questões de escolha múltipla -->
+                {% for option in question.options.split(',') %}
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option_{{ forloop.counter }}" value="{{ option }}">
+                    <label class="form-check-label" for="option_{{ forloop.counter }}">
+                      {{ option }}
+                    </label>
+                  </div>
+                {% endfor %}
+              {% elif question.question_type == "OE" %}
+                <!-- Exemplo para questões de resposta aberta -->
+                <textarea class="form-control" id="question_{{ question.id }}" name="question_{{ question.id }}"></textarea>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>CTCT &copy; 2023/2024</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
