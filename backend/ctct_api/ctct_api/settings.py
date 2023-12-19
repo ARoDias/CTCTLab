@@ -20,7 +20,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # Debug mode should be False in Production
 DEBUG = bool(os.getenv("DEBUG", True))
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+# Limit the allowed hosts in Production
+ALLOWED_HOSTS = ['127.0.0.1','192.168.1.18','localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -136,13 +137,19 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
-    'AUTH_TOKEN_CLASSES': ('simple_jwt.tokens.AccessToken',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=120),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080").split(",")
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.18', 'localhost']
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:8081",  
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
