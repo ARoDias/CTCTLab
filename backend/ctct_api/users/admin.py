@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
-from .models import (User, StudentProfile, TeacherProfile, Course, Classroom, StudentGroup, TPRegistration)
+from .models import (User, StudentProfile, TeacherProfile, Course, Classroom, StudentGroup)
 
 @admin.register(User)
 class UserAdmin(DefaultUserAdmin):
@@ -13,4 +13,3 @@ admin.site.register(TeacherProfile)
 admin.site.register(Course)
 admin.site.register(Classroom)
 admin.site.register(StudentGroup)
-admin.site.register(TPRegistration)

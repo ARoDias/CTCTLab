@@ -1,56 +1,87 @@
-<!-- ModalComponent.vue -->
-
-<!-- The template section defines the HTML structure of the modal component -->
+<!-- components/ModalComponent.vue -->
 <template>
-  <div class="modal">
-    <!-- iframe element to embed content, :src binds it to the iframeUrl prop -->
-    <iframe ref="iframeElement" :src="iframeUrl"></iframe>
-    <!-- Close button emits a 'close' event to the parent component when clicked -->
-    <button class="close-button" @click="$emit('close')">Fechar</button>
+  <div class="modal-overlay" v-show="isVisible" @click.self="closeModal">
+    <div class="modal-content" @click.stop>
+      <header class="modal-header">
+        <slot name="header"></slot>
+        <button class="close-button" @click="closeModal">&times;</button>
+      </header>
+
+      <main class="modal-body">
+        <slot></slot>
+      </main>
+
+      <footer class="modal-footer">
+        <slot name="footer"></slot>
+      </footer>
+    </div>
   </div>
 </template>
 
-<!-- The script section contains the Vue.js logic for this component -->
 <script>
 export default {
-  // Define props to receive iframeUrl from the parent component
-  props: ['iframeUrl'],
-  
-  // Code to run when the component is mounted
-  mounted() {
-    // Add an event listener for the 'message' event
-    window.addEventListener('message', this.receiveMessage, false);
+  props: {
+    isVisible: {
+      type: Boolean,
+      default: false,
+    },
   },
-  
-  // Code to run before the component is unmounted
-  beforeUnmount() {
-    // Remove the previously added event listener
-    window.removeEventListener('message', this.receiveMessage);
-  },
-
-  // Define methods used within this component
   methods: {
-    receiveMessage(event) {
-      // Check if the message is coming from the expected origin
-      if (event.origin !== "http://127.0.0.1:8000") {
-        return;
-      }
-      
-      // Handle the message and log it to the console
-      const data = event.data;
-      console.log("Received data:", data);
-    }
-  }
+    closeModal() {
+      this.$emit("update:isVisible", false);
+    },
+  },
 };
 </script>
 
-<!-- Scoped styles specifically for this component -->
 <style scoped>
+.modal-body {
+  padding: 10px;
+  background-color: white;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: auto;
+  max-width: 600px;
+  margin: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--primary-blue);
+}
+
+.modal-header {
+  background: var(--primary-blue);
+  color: var(--white);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 101;
+  border-top-right-radius: var(--border-radius);
+  border-top-left-radius: var(--border-radius);
+}
+
 .close-button {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 30px;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5em;
   cursor: pointer;
 }
 </style>

@@ -2,8 +2,9 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from .models import Activity, Week, FileSubmission
-from .serializers import ActivitySerializer, WeekSerializer, FileSubmissionSerializer
+from .models import Activity, Week, FileSubmission, Question, Questionnaire, Answer, ActivityAttempt
+from .serializers import (ActivitySerializer, ActivityAttemptSerializer, WeekSerializer, FileSubmissionSerializer, 
+                          QuestionSerializer, QuestionnaireSerializer, AnswerSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from users.models import StudentGroup
 
@@ -11,6 +12,11 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
     # ActivityViewSet provides CRUD functions for Activity model
+
+# ViewSet for ActivityAttempt
+class ActivityAttemptViewSet(viewsets.ModelViewSet):
+    queryset = ActivityAttempt.objects.all()
+    serializer_class = ActivityAttemptSerializer
 
 class WeekViewSet(viewsets.ModelViewSet):
     queryset = Week.objects.all()
@@ -43,3 +49,18 @@ def task_list(request):
     serializer = ActivitySerializer(activities, many=True)
     return Response(serializer.data)
     # task_list view provides activity list for authenticated user based on their profile
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    # Handles CRUD for Question model
+
+class QuestionnaireViewSet(viewsets.ModelViewSet):
+    queryset = Questionnaire.objects.all()
+    serializer_class = QuestionnaireSerializer
+    # Manages CRUD for Questionnaire model
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    # CRUD operations for Answer model

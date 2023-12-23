@@ -5,6 +5,10 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'activity', views.ActivityViewSet)
+router.register(r'weeks', views.WeekViewSet) 
+router.register(r'questionnaires', views.QuestionnaireViewSet) 
+router.register(r'questions', views.QuestionViewSet) 
+router.register(r'answers', views.AnswerViewSet) 
 
 urlpatterns = [
     path('', include(router.urls)),

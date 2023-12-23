@@ -1,129 +1,132 @@
+/* Define color variables */
+:root {
+  --primary-blue: #446ebc; /* Primary Blue */
+  --secondary-blue: #5cbecc; /* Secondary Blue */
+  --primary-green: #7cbe04; /* Primary Green */
+  --dark-blue: #34567a; /* Dark Blue for depth */
+  --light-blue: #a7cdee; /* Light Blue for contrast */
+  --white: #fff; /* White */
+  --dark-gray: #333; /* Dark Gray */
+  --black: #000; /* Black */
+  --border-radius: 10px; /* Border radius for rounded corners */
+}
 
-
-/* Main Content */
+/* Main Content Styling */
 main {
   padding: 10px 0;
-  background-color: #446EBC; 
+  background-color: var(--primary-blue);
 }
 
-/* Footer */
+/* Footer Styling */
 footer {
   padding: 5px;
-  color: #333;
+  color: var(--dark-gray);
   text-align: center;
-  background-color: #7CBE04;
+  background-color: var(--primary-green);
 }
 
-/* Header */
+/* Header Styling */
 header {
   padding: 10px 0;
-  color: #fff;
-  background-color: #7CBE04;
+  color: var(--white);
+  background-color: var(--primary-green);
 }
 
-/* Header Links */
+/* Header Link Styling */
 header a {
-  color: #fff;
+  color: var(--white);
   text-decoration: none;
 }
 
-/* Navigation Bar */
+/* Navigation Bar Styling */
 nav {
-  background-color: #5CBECC;
+  background-color: var(--secondary-blue);
 }
 
-/* Navigation Bar Links */
+/* Navigation Bar Link Styling */
 nav a {
-  color: #fff;
+  color: var(--white);
   text-decoration: none;
   padding: 10px;
 }
 
-/* Navigation Bar Links - Hover State */
+/* Hover State for Navigation Bar Links */
 nav a:hover {
-  color: #fff;
-  background-color: #5CBECC;
+  color: var(--white);
+  background-color: var(--secondary-blue);
 }
 
-/* Navigation Bar - Bootstrap Specific */
+/* Specific Styling for Bootstrap Navigation Bar */
 .navbar {
-  background-color: #7CBE04;
+  background-color: var(--primary-green);
 }
 
-/* Navigation Bar Links - Bootstrap Specific - Hover State */
+/* Hover State for Bootstrap Navigation Bar Links */
 .navbar .nav-link:hover {
-  color: #fff;
-  background-color: #446EBC;
+  color: var(--white);
+  background-color: var(--primary-blue);
+  border-radius: var(--border-radius);
 }
 
-/* Navigation Bar - Responsive - Padding for screens less than 576px wide */
+/* Responsive Styling for Navigation Bar in Small Screens */
 @media (max-width: 576px) {
   .navbar {
     padding: 5px 0;
   }
 }
 
-/* Headings */
+/* Headings Styling */
 h1 {
-  color: #fff;
-  background-color: #7CBE04;
+  color: var(--white);
+  background-color: var(--primary-green);
   text-align: center;
 }
 
 h2 {
-  color: #fff;
-  background-color: #5CBECC; 
+  color: var(--white);
+  background-color: var(--secondary-blue);
   text-align: center;
+  border-radius: var(--border-radius);
 }
-
-h3 {
-  color: #446EBC;
-  text-align: center;
-}
-
-/* Card Component */
+/* Card Component Styling */
 .card {
-  padding: 20px;
-  margin-top: 20px;
-  background-color: white;
+  padding: 10px;
+  background-color: var(--white);
   margin: 16px;
+  border-radius: 4px;
 }
 
-/* Set the font for the entire body to Arial, sans-serif and set the background color */
+/* Body Styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: #7CBE04;
+  background-color: var(--primary-green);
 }
 
-
-
-/* Set the background color, padding, and border radius (rounded corners) for forms */
+/* Form Styling */
 form {
-  background-color: #7CBE04;
+  background-color: var(--primary-green);
   padding: 20px;
   border-radius: 4px;
 }
 
-/* Style text, password, and email input fields to take up full width, 
-     with padding for text inside, margin outside, and a styled border */
-input[type=text],
-input[type=password],
-input[type=email] {
+/* Styling for Text, Password, and Email Input Fields */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #446ABC;
+  border: 1px solid var(--primary-blue);
   border-radius: 4px;
   box-sizing: border-box;
 }
 
-/* Style the submit button to take up full width, with a specific background color, text color,
-     padding, margin, and no border */
-input[type=submit] {
+/* Submit Button Styling */
+input[type="submit"] {
   width: 100%;
-  background-color: #446ABC;
-  color: white;
+  background-color: var(--primary-blue);
+  color: var(--white);
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
@@ -131,12 +134,13 @@ input[type=submit] {
   cursor: pointer;
 }
 
-/* Change the background color of the submit button when hovered over */
-input[type=submit]:hover {
-  background-color: #5CBECC;
+/* Hover State for Submit Button */
+input[type="submit"]:hover {
+  background-color: var(--secondary-blue);
+  border-radius: var(--border-radius);
 }
 
-
+/* Additional Classes */
 .help-text {
   font-size: 0.8em;
 }
@@ -149,6 +153,7 @@ input[type=submit]:hover {
 .submit-button {
   text-align: right;
   padding: 12px 28px;
+  border-radius: var(--border-radius);
 }
 
 .close-button {
@@ -159,34 +164,13 @@ input[type=submit]:hover {
   background-color: transparent;
   border: none;
   font-size: 1.5em;
-  color: #fff;
-  /* Change as needed */
-}
-
-
-.modal {
-  display: block !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color:white;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-}
-
-.modal-header {
-  background-color: #446ABC;
-  color: white;
+  color: var(--white);
 }
 
 .form-group {
-  background-color: #7CBE04;
-  padding: 20px;
+  background-color: var(--primary-green);
+  padding: 10px;
   border-radius: 5px;
-}
-
-.form-label {
-  font-weight: bold;
 }
 
 .form-input {
@@ -194,15 +178,15 @@ input[type=submit]:hover {
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #446ABC;
+  border: 1px solid var(--primary-blue);
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 .form-submit {
   width: 100%;
-  background-color: #446ABC;
-  color: white;
+  background-color: var(--primary-blue);
+  color: var(--white);
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
@@ -217,27 +201,27 @@ input[type=submit]:hover {
 .formfield {
   display: table;
   width: 100%;
-  padding-bottom: 25px;
-}
-.formfield label,
-.formfield .input-wrapper {
-    display: table-cell;
-    vertical-align: top;
+  padding-bottom: 5px;
 }
 
-.formfield label {
-    width: 100px;
+.formfield label,
+.formfield .input-wrapper {
+  display: table-cell;
+  vertical-align: top;
 }
 
 .formfield .input-wrapper .table-form {
-    width: 100%;
+  width: 100%;
 }
 
 .card-container {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap; /* Isto permite que os cards se ajustem numa nova linha caso não haja espaço suficiente */
+  flex-wrap: wrap; /* Allows cards to wrap to new line if insufficient space */
+  border-radius: 10px;
 }
+
 .news-card {
   margin: 10px;
+  border-radius: 10px;
 }

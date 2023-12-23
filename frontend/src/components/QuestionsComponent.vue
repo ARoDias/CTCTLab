@@ -18,17 +18,16 @@
 
 <script>
 export default {
-  props: ['question'],
-  emits: ['question-answered'],
+  props: ["question"],
+  emits: ["question-answered"],
   methods: {
     selectAnswer(isCorrect) {
-      this.$emit('question-answered', isCorrect);
+      this.$emit("question-answered", isCorrect);
     },
   },
 };
 </script>
 <style scoped>
-
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
   --vt-c-white: #ffffff;
@@ -96,8 +95,9 @@ body {
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -198,21 +198,21 @@ body {
 }
 .fade-leave-to {
   opacity: 0;
-} 
+}
 
 .reset-btn {
   background-color: #ff6372;
-    border: 0;
-    font-size: 22px;
-    color: #fff;
-    padding: 10px 25px;
-    margin: 10px auto;
-    display: block;
+  border: 0;
+  font-size: 22px;
+  color: #fff;
+  padding: 10px 25px;
+  margin: 10px auto;
+  display: block;
 }
 
-
-
-.reset-btn:active, .reset-btn:focus, .reset-btn:hover{
+.reset-btn:active,
+.reset-btn:focus,
+.reset-btn:hover {
   border: 0;
   outline: 0;
 }

@@ -1,7 +1,7 @@
 
 # backend/ctct_api/users/serializers.py
 from rest_framework import serializers
-from .models import (User, StudentProfile, TeacherProfile, Course, StudentGroup)
+from .models import (User, StudentProfile, TeacherProfile, Course, StudentGroup, Classroom)
 
 # User Model Serializer
 class UserSerializer(serializers.ModelSerializer):
@@ -102,3 +102,11 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('id', 'name')
+
+# Classroom Model Serializer
+class ClassroomSerializer(serializers.ModelSerializer):
+    class_type_display = serializers.CharField(source='get_class_type_display', read_only=True)
+
+    class Meta:
+        model = Classroom
+        fields = ['id', 'name', 'capacity', 'class_type', 'class_type_display']

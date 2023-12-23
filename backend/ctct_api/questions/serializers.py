@@ -1,7 +1,9 @@
 
 # backend/ctct_api/questions/serializers.py
 from rest_framework import serializers
-from .models import (Activity, Week, ActivityParticipation, FileSubmission, DownloadableContent)
+from .models import (Activity, Week, ActivityParticipation, ActivityAttempt,
+                     FileSubmission, DownloadableContent, 
+                     Question, Option, Questionnaire, Answer)
 from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
 
 # Week Model Serializer
@@ -18,7 +20,13 @@ class ActivitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ['id', 'title', 'description', 'start_time', 'end_time', 'classroom', 'teacher', 'week', 'is_active']
+        fields = '__all__'
+
+# Serializer for ActivityAttempt
+class ActivityAttemptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityAttempt
+        fields = ['id', 'student', 'activity', 'start_time', 'end_time', 'score']
 
 
 # Activity Participation Model Serializer
@@ -44,10 +52,39 @@ class DownloadableContentSerializer(serializers.ModelSerializer):
         model = DownloadableContent
         fields = ['id', 'title', 'week', 'file', 'uploaded_at']
 
-
-# Redefining Activity Serializer for All Fields
-class ActivitySerializer(serializers.ModelSerializer):
+class OptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Activity
-        fields = '__all__'
+        model = Option
+        fields = ['id', 'option_text']
 
+class QuestionSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = ['id', 'question_text', 'question_type', 'options']
+
+    def create(self, validated_data):
+        options_data = validated_data.pop('options')
+        question = Question.objects.create(**validated_data)
+        for option_data in options_data:
+            Option.objects.create(question=question, **option_data)
+        return question
+
+class QuestionnaireSerializer(serializers.ModelSerializer):
+    questions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Questionnaire
+        fields = ['id', 'title', 'description', 'questions']
+
+    def get_questions(self, obj):
+        questions = obj.get_ordered_questions()
+        return QuestionSerializer(questions, many=True).data
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    question = QuestionSerializer(read_only=True)
+    class Meta:
+        model = Answer
+        fields = '__all__'

@@ -1,48 +1,57 @@
 <template>
-  <div class="modal" v-if="showModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Login de Utilizador</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            @click="closeModal"
-            aria-label="Close"
-          ></button>
+  <!-- Utiliza o componente modal genérico -->
+  <ModalComponent
+    :isVisible="showModal"
+    @update:isVisible="handleVisibilityChange"
+  >
+    <template #header>
+      <!-- Conteúdo personalizado para o cabeçalho do modal -->
+      <h5 class="modal-title">Login de Utilizador</h5>
+    </template>
+
+    <template #default>
+      <!-- Corpo principal do modal, contendo o formulário de login -->
+      <form @submit.prevent="submitLogin">
+        <div class="form-group">
+          <label for="username">Username (número de aluno):</label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            autocomplete="username"
+          />
         </div>
-        <div class="modal-body">
-          <form @submit.prevent="submitLogin">
-            <label for="username">Username (número de aluno):</label>
-            <input
-              type="text"
-              id="username"
-              v-model="username"
-              autocomplete="username"
-            />
-            <label for="password">Senha/Password:</label>
-            <input
-              type="password"
-              id="password"
-              v-model="password"
-              autocomplete="current-password"
-            />
-            <button class="btn btn-primary" type="submit">Login</button>
-          </form>
-          <div v-if="errorMessage" class="alert alert-danger">
-            {{ errorMessage }}
-          </div>
+        <div class="form-group">
+          <label for="password">Senha/Password:</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            autocomplete="current-password"
+          />
         </div>
+        <div class="submit-button">
+          <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+      </form>
+      <div v-if="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
       </div>
-    </div>
-  </div>
+    </template>
+
+    <template #footer>
+      <!-- Conteúdo personalizado para o rodapé do modal, se necessário -->
+    </template>
+  </ModalComponent>
 </template>
 
 <script>
 import axios from "axios";
-
+import ModalComponent from "@/components/ModalComponent.vue";
 export default {
+  components: {
+    ModalComponent,
+  },
   data() {
     return {
       username: "",
@@ -54,9 +63,12 @@ export default {
   methods: {
     closeModal() {
       this.showModal = false;
-      this.errorMessage = ""; // Limpar mensagem de erro ao fechar modal
+      this.errorMessage = ""; // Clears the error message when modal is closed
       document.title = "CTCTLab";
       this.$emit("closeModal");
+    },
+    handleVisibilityChange(value) {
+      this.showModal = value;
     },
     async submitLogin() {
       try {
@@ -90,12 +102,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 5px;
-  position: relative;
-}
-</style>

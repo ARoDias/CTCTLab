@@ -49,12 +49,18 @@ export default {
       week: 1, // Current week number for display
     };
   },
-  mounted() {
-    // Fetch user and tasks data when the component is mounted
-    this.fetchCurrentUser();
-    this.fetchTasks();
+  created() {
+    this.checkLoginStatus();
   },
   methods: {
+    checkLoginStatus() {
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        this.loggedIn = true;
+        this.fetchCurrentUser(token);
+        this.fetchTasks(token);
+      }
+    },
     fetchCurrentUser() {
       // Retrieve the JWT token from localStorage
       const token = localStorage.getItem("userToken");

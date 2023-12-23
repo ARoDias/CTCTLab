@@ -39,8 +39,6 @@ export default {
 
 <style scoped>
 h2 {
-  color: #fff;
-  background-color: #5cbecc;
-  text-align: center;
+  color: var(--white);
 }
 </style>

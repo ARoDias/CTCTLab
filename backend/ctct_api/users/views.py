@@ -7,43 +7,53 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
-from .models import StudentProfile, TeacherProfile, User, Course
-from .serializers import (UserSerializer, CourseSerializer, UserAndProfileRegistrationSerializer, CustomLoginSerializer,StudentProfileSerializer, TeacherProfileSerializer)
+from .models import StudentProfile, TeacherProfile, User, Course, Classroom, StudentGroup
+from .serializers import (UserSerializer, CourseSerializer, UserAndProfileRegistrationSerializer, 
+                          CustomLoginSerializer,StudentProfileSerializer, TeacherProfileSerializer,
+                          ClassroomSerializer, StudentGroupSerializer)
 from .utilities import send_activation_email_util
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
-# API Views to handle the different endpoints
+
+# ViewSet for the User model, supporting CRUD operations
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # UserViewSet handles CRUD operations for User model
 
+# ViewSet for the Course model, supporting CRUD operations
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    # CourseViewSet manages CRUD for Course model
 
+# ViewSet for the Classroom model, supporting CRUD operations
+class ClassroomViewSet(viewsets.ModelViewSet):
+    queryset = Classroom.objects.all()
+    serializer_class = ClassroomSerializer
+
+# ViewSet for the StudentProfile model, supporting CRUD operations
 class StudentProfileViewSet(viewsets.ModelViewSet):
     queryset = StudentProfile.objects.all()
     serializer_class = StudentProfileSerializer
-    # Handles CRUD for StudentProfile
 
+# ViewSet for the StudentGroup model, supporting CRUD operations
+class StudentGroupViewSet(viewsets.ModelViewSet):
+    queryset = StudentGroup.objects.all()
+    serializer_class = StudentGroupSerializer
+
+# ViewSet for the TeacherProfile model, supporting CRUD operations
 class TeacherProfileViewSet(viewsets.ModelViewSet):
     queryset = TeacherProfile.objects.all()
     serializer_class = TeacherProfileSerializer
-    # CRUD operations for TeacherProfile are managed here
 
+# API view to retrieve the currently authenticated user's information
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def current_user(request):
-    """
-    Retrieve the authenticated user's information.
-    """
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
-    # current_user view returns data of the logged-in user
 
+# API view to handle user login and JWT token generation
 class CustomLoginView(APIView):
     serializer_class = CustomLoginSerializer
     template_name = 'rest_framework/login.html'
@@ -77,6 +87,7 @@ class CustomLoginView(APIView):
         return Response({"error": "Número de aluno/username ou password errados!"}, status=status.HTTP_400_BAD_REQUEST)
         # Custom login view to authenticate and provide JWT token
 
+# ViewSet to handle user registration including sending activation emails
 class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """Handles user registration."""
     queryset = User.objects.all()
@@ -116,12 +127,4 @@ class ActivateAccount(APIView):
             print(f"Invalid token or user not found for UID: {uid}, Token: {token}")
             return Response({"error": "Link de ativação inválido!"}, status=status.HTTP_400_BAD_REQUEST)
         
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def current_user(request):
-    """
-    Retrieve the authenticated user's information.
-    """
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
-    # Duplicate view, consider removing
+

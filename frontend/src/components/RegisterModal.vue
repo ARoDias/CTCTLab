@@ -1,178 +1,183 @@
 <!-- components/RegisterModal.vue -->
 <template>
-  <div class="modal" v-if="showModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Registo do Aluno</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            @click="closeModal"
-            aria-label="Close"
-          ></button>
+  <!-- Utilize ModalComponent para envolver o formulário de registro -->
+  <ModalComponent
+    :isVisible="showModal"
+    @update:isVisible="handleVisibilityChange"
+  >
+    <template #header>
+      <h5 class="modal-title">Registo do Aluno</h5>
+    </template>
+
+    <template #default>
+      <form method="POST" @submit.prevent="submitRegister" class="form-group">
+        <div class="field-group">
+          <label for="username">Número de Aluno:</label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            required
+            autocomplete="username"
+          />
+
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            required
+            autocomplete="email"
+          />
         </div>
-        <form method="POST" @submit.prevent="submitRegister" class="form-group">
-          <div class="field-group">
-            <label for="username">Número de Aluno:</label>
+
+        <div class="field-group">
+          <div class="formfield">
+            <label for="password1">Senha:</label>
+            <input
+              type="password"
+              id="password1"
+              v-model="password1"
+              pattern=".{8,}"
+              title="Deve conter pelo menos 8 caracteres"
+              required
+              autocomplete="asdasdasd"
+            />
+          </div>
+          <div class="formfield">
+            <label for="password2">Confirmação da senha:</label>
+            <input
+              type="password"
+              id="password2"
+              v-model="password2"
+              pattern=".{8,}"
+              title="Deve conter pelo menos 8 caracteres"
+              required
+              autocomplete="asdasdasd"
+            />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="col">
             <input
               type="text"
-              id="username"
-              v-model="username"
+              class="form-control"
+              placeholder="Primeiro Nome"
+              aria-label="First name"
+              id="first_name"
+              v-model="first_name"
               required
-              autocomplete="username"
+              autocomplete="given-name"
             />
-
-            <label for="email">Email:</label>
+          </div>
+          <div class="col">
             <input
-              type="email"
-              id="email"
-              v-model="email"
+              type="text"
+              class="form-control"
+              placeholder="Apelido"
+              aria-label="Last name"
+              id="last_name"
+              v-model="last_name"
               required
-              autocomplete="email"
+              autocomplete="family-name"
             />
           </div>
-
-          <div class="field-group">
-            <div class="formfield">
-              <label for="password1">Senha:</label>
-              <input
-                type="password"
-                id="password1"
-                v-model="password1"
-                pattern=".{8,}"
-                title="Deve conter pelo menos 8 caracteres"
-                required
-                autocomplete="asdasdasd"
-              />
-            </div>
-            <div class="formfield">
-              <label for="password2">Confirmação da senha:</label>
-              <input
-                type="password"
-                id="password2"
-                v-model="password2"
-                pattern=".{8,}"
-                title="Deve conter pelo menos 8 caracteres"
-                required
-                autocomplete="asdasdasd"
-              />
-            </div>
-          </div>
-          <hr />
-          <div class="row">
-            <div class="col">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Primeiro Nome"
-                aria-label="First name"
-                id="first_name"
-                v-model="first_name"
-                required
-                autocomplete="given-name"
-              />
-            </div>
-            <div class="col">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Apelido"
-                aria-label="Last name"
-                id="last_name"
-                v-model="last_name"
-                required
-                autocomplete="family-name"
-              />
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="formfield">
-              <label for="course">Curso: </label>
-              <select id="course" v-model="course" required>
-                <option disabled value="">Escolhe um curso</option>
-                <option
-                  v-for="course in courses"
-                  :key="course.id"
-                  :value="course.name"
-                >
-                  {{ course.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="field-group">
-              <div class="formfield">
-                <label for="age">Idade:</label>
-                <input type="number" id="age" v-model="age" required />
-              </div>
-              <label for="gender">Género: </label><br />
-              <input
-                type="radio"
-                id="feminino"
-                name="gender"
-                value="F"
-                v-model="gender"
-              />
-              <label for="feminino">Feminino</label><br />
-              <input
-                type="radio"
-                id="masculino"
-                name="gender"
-                value="M"
-                v-model="gender"
-              />
-              <label for="masculino">Masculino</label><br />
-              <input
-                type="radio"
-                id="outro"
-                name="gender"
-                value="O"
-                v-model="gender"
-              />
-              <label for="outro">Outro / Prefiro não dizer</label>
-            </div>
-          </div>
-          <hr />
-          <div text-align="left" class="consent-field">
-            <label for="data_consent">
-              <input
-                type="checkbox"
-                id="data_consent"
-                v-model="data_consent"
-                required
-              />
-              Concordo com a
-              <a href="#" @click.prevent="openPrivacyPolicy"
-                >recolha de dados</a
-              >
-            </label>
-          </div>
-          <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
-          <div class="submit-button">
-            <button class="btn btn-primary" type="submit">Registar</button>
-          </div>
-        </form>
-
-        <!-- Privacy Policy Modal -->
-        <div v-if="showPrivacyPolicy" class="privacy-policy-popup">
-          <PrivacyPolicy @closePolicy="handleClosePolicy"></PrivacyPolicy>
         </div>
-      </div>
-    </div>
-  </div>
+
+        <div class="field-group">
+          <div class="formfield">
+            <label for="course">Curso: </label>
+            <select id="course" v-model="course" required>
+              <option disabled value="">Escolhe um curso</option>
+              <option
+                v-for="course in courses"
+                :key="course.id"
+                :value="course.name"
+              >
+                {{ course.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="formfield">
+              <label for="age">Idade:</label>
+              <input type="number" id="age" v-model="age" required />
+            </div>
+            <label for="gender">Género: </label><br />
+            <input
+              type="radio"
+              id="feminino"
+              name="gender"
+              value="F"
+              v-model="gender"
+            />
+            <label for="feminino">Feminino</label><br />
+            <input
+              type="radio"
+              id="masculino"
+              name="gender"
+              value="M"
+              v-model="gender"
+            />
+            <label for="masculino">Masculino</label><br />
+            <input
+              type="radio"
+              id="outro"
+              name="gender"
+              value="O"
+              v-model="gender"
+            />
+            <label for="outro">Outro / Prefiro não dizer</label>
+          </div>
+        </div>
+
+        <div text-align="left" class="consent-field">
+          <label for="data_consent">
+            <input
+              type="checkbox"
+              id="data_consent"
+              v-model="data_consent"
+              required
+            />
+            Concordo com a
+            <a href="#" @click.prevent="openPrivacyPolicy">recolha de dados</a>
+          </label>
+        </div>
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <div class="submit-button">
+          <button class="btn btn-primary" type="submit">Registar</button>
+        </div>
+      </form>
+
+      <!-- Política de Privacidade Modal -->
+      <PrivacyPolicy
+        v-if="showPrivacyPolicy"
+        @closePolicy="handleClosePolicy"
+      />
+    </template>
+
+    <template #footer>
+      <!-- Conteúdo do rodapé do modal, se necessário -->
+    </template>
+  </ModalComponent>
 </template>
 
 <script>
+// Importações necessárias e a lógica do componente permanecem as mesmas
 import axios from "axios";
 import { getCookie, setCookie } from "./utilities.js";
 import PrivacyPolicy from "./PrivacyPolicy.vue";
+import ModalComponent from "@/components/ModalComponent.vue"; // Certifique-se de que o caminho está correto
 
 export default {
+  components: {
+    ModalComponent,
+    PrivacyPolicy,
+  },
   data() {
     return {
       username: "",
@@ -194,11 +199,13 @@ export default {
     };
   },
   methods: {
-    // Method to close the modal
     closeModal() {
       this.showModal = false; // Set showModal to false to hide it
       document.title = "CTCTLab";
       this.$emit("closeModal"); // Emit event to parent component
+    },
+    handleVisibilityChange(value) {
+      this.showModal = value;
     },
     openPrivacyPolicy() {
       this.showPrivacyPolicy = true;
@@ -271,17 +278,5 @@ export default {
     this.fetchCourses();
     document.title = "Registo";
   },
-  components: { PrivacyPolicy },
 };
 </script>
-
-<style scoped>
-/* Set the maximum width, auto margin (centers the container), and padding for the container */
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 5px;
-  position: relative;
-  display: flex;
-}
-</style>

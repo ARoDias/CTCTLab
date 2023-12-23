@@ -3,7 +3,7 @@
 <!-- The template for the WeekComponent -->
 <template>
   <div>
-    <h1>{{ title }}</h1>
+    <h2>{{ title }}</h2>
     <div v-if="currentUser && currentUser.role === 'teacher'">
       <p>Verificar que está a funcionar... docente</p>
       <!-- Teacher-specific content -->
@@ -48,7 +48,7 @@ export default {
     fetchActivities() {
       this.title = `Semana ${this.$route.params.weekNumber}`;
       axios
-        .get(`/api/questions/activities?week=${this.$route.params.weekNumber}`)
+        .get(`/api/questions/activity?week=${this.$route.params.weekNumber}`)
         .then((response) => {
           this.activities = response.data;
         })
@@ -59,3 +59,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+h2 {
+  color: var(--white);
+}
+</style>
