@@ -9,6 +9,9 @@ router.register(r'weeks', views.WeekViewSet)
 router.register(r'questionnaires', views.QuestionnaireViewSet) 
 router.register(r'questions', views.QuestionViewSet) 
 router.register(r'answers', views.AnswerViewSet) 
+router.register(r'options', views.OptionViewSet)
+router.register(r'questionnairequestions', views.QuestionnaireQuestionViewSet)
+ 
 
 urlpatterns = [
     path('', include(router.urls)),

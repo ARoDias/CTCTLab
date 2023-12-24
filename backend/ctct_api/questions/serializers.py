@@ -2,7 +2,7 @@
 # backend/ctct_api/questions/serializers.py
 from rest_framework import serializers
 from .models import (Activity, Week, ActivityParticipation, ActivityAttempt,
-                     FileSubmission, DownloadableContent, 
+                     FileSubmission, DownloadableContent, QuestionnaireQuestion,
                      Question, Option, Questionnaire, Answer)
 from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
 
@@ -55,15 +55,14 @@ class DownloadableContentSerializer(serializers.ModelSerializer):
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = ['id', 'option_text']
+        fields = '__all__'
 
 class QuestionSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)
 
     class Meta:
         model = Question
-        fields = ['id', 'question_text', 'question_type', 'options']
-
+        fields = '__all__'
     def create(self, validated_data):
         options_data = validated_data.pop('options')
         question = Question.objects.create(**validated_data)
@@ -76,15 +75,24 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Questionnaire
-        fields = ['id', 'title', 'description', 'questions']
+        fields = ['id', 'title', 'description', 'activity', 'questions']
 
     def get_questions(self, obj):
-        questions = obj.get_ordered_questions()
-        return QuestionSerializer(questions, many=True).data
-
+        # Fetch only question IDs to reduce load
+        return obj.questions.values_list('id', flat=True)
 
 class AnswerSerializer(serializers.ModelSerializer):
     question = QuestionSerializer(read_only=True)
     class Meta:
         model = Answer
         fields = '__all__'
+
+class OptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Option
+        fields = '__all__'
+
+class QuestionnaireQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionnaireQuestion
+        fields = ['id', 'questionnaire', 'question', 'order']

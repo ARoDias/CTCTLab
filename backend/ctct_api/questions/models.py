@@ -13,22 +13,33 @@ class Week(models.Model):
     def __str__(self):
         return f"Week {self.number}: {self.theme}"
 
-# Model for various activities like quizzes, questions, etc.
+# Activity Model
 class Activity(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     classroom = models.ForeignKey('users.Classroom', on_delete=models.CASCADE)
-    teacher = models.ForeignKey('users.TeacherProfile', on_delete=models.CASCADE)
     week = models.ForeignKey(Week, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return self.title
 
+class Questionnaire(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    # Add a related_name for the reverse relation from Questionnaire to Question
+    questions = models.ManyToManyField('Question', through='QuestionnaireQuestion', related_name='questionnaires')
+    activity = models.ForeignKey(Activity, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def get_ordered_questions(self):
+        return [qq.question for qq in self.questionnairequestion_set.all().order_by('order')]
+
+    def __str__(self):
+        return f"Questionnaire: {self.title}"
+
 class Question(models.Model):
-    # Types of questions supported
     QUESTION_TYPES = (
         ('MCQ', 'Multiple Choice Question'),
         ('TF', 'True/False'),
@@ -36,10 +47,12 @@ class Question(models.Model):
     )
     question_text = models.CharField(max_length=255)
     question_type = models.CharField(max_length=10, choices=QUESTION_TYPES)
-    activity = models.ForeignKey(Activity, related_name='questions', on_delete=models.CASCADE, null=True, blank=True)
+    # Specify a related_name for the reverse relation from Question to Questionnaire
+    questionnaire = models.ForeignKey('Questionnaire', on_delete=models.CASCADE, related_name='questions_in_questionnaire', null=True)
 
     def __str__(self):
         return f"Question ID {self.id} - {self.question_text}"
+
 
 class Option(models.Model):
     # Each option is linked to a specific question
@@ -50,16 +63,6 @@ class Option(models.Model):
     def __str__(self):
         return f"Option for Question ID {self.question.id}: {self.option_text} - {'Correct' if self.is_correct else 'Incorrect'}"
 
-class Questionnaire(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    # Using through to define an additional model for ordering questions in a questionnaire
-    questions = models.ManyToManyField(Question, through='QuestionnaireQuestion')
-    activity = models.ForeignKey(Activity, on_delete=models.SET_NULL, null=True, blank=True)
-    def get_ordered_questions(self):
-        return [qq.question for qq in self.questionnairequestion_set.all().order_by('order')]
-    def __str__(self):
-        return f"Questionnaire: {self.title}"
 
 class QuestionnaireQuestion(models.Model):
     # Intermediate model to define the order of questions in a questionnaire

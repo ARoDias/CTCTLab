@@ -1,9 +1,7 @@
 <template>
   <div class="questions-ctr">
-    <!-- Display the current question -->
     <div class="question">{{ question.q }}</div>
     <div class="answers">
-      <!-- Display all possible answers for the current question -->
       <button
         v-for="answer in question.answers"
         :key="answer.text"
@@ -27,6 +25,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 /* color palette from <https://github.com/vuejs/theme> */
 :root {

@@ -2,9 +2,11 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from .models import Activity, Week, FileSubmission, Question, Questionnaire, Answer, ActivityAttempt
+from .models import (Option, QuestionnaireQuestion,
+                     Activity, Week, FileSubmission, Question, 
+                     Questionnaire, Answer, ActivityAttempt)
 from .serializers import (ActivitySerializer, ActivityAttemptSerializer, WeekSerializer, FileSubmissionSerializer, 
-                          QuestionSerializer, QuestionnaireSerializer, AnswerSerializer)
+                          QuestionSerializer, QuestionnaireSerializer, AnswerSerializer, OptionSerializer, QuestionnaireQuestionSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from users.models import StudentGroup
 
@@ -64,3 +66,13 @@ class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     # CRUD operations for Answer model
+
+class OptionViewSet(viewsets.ModelViewSet):
+    queryset = Option.objects.all()
+    serializer_class = OptionSerializer
+    # CRUD operations for Option model
+
+class QuestionnaireQuestionViewSet(viewsets.ModelViewSet):
+    queryset = QuestionnaireQuestion.objects.all()
+    serializer_class = QuestionnaireQuestionSerializer
+    # CRUD operations for QuestionnaireQuestion model

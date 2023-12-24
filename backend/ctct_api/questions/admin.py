@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (Week, Activity, ActivityAttempt, ActivityParticipation, 
-                     FileSubmission, DownloadableContent,
+                     FileSubmission, DownloadableContent, QuestionnaireQuestion,
                      Question, Questionnaire, Answer, Option)
 
 
@@ -13,4 +13,5 @@ admin.site.register(DownloadableContent)
 admin.site.register(Question)
 admin.site.register(Option)
 admin.site.register(Questionnaire)
+admin.site.register(QuestionnaireQuestion)
 admin.site.register(Answer)

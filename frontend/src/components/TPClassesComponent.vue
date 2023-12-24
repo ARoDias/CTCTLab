@@ -1,9 +1,7 @@
 <template>
   <div>
-    <!-- Button to open the questions modal -->
-    <button @click="showModal = true">Abrir Questionário</button>
+    <button @click="fetchQuestions">Abrir Questionário</button>
 
-    <!-- QuestionsModal with the content passed as slot -->
     <QuestionsModal :show="showModal" @close="closeModal">
       <QuestionsComponent
         v-if="questionsAnswered < questions.length"
@@ -16,6 +14,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import QuestionsModal from "@/components/QuestionsModal.vue";
 import QuestionsComponent from "@/components/QuestionsComponent.vue";
 import ResultComponent from "@/components/ResultComponent.vue";
@@ -31,95 +30,61 @@ export default {
       showModal: false,
       questionsAnswered: 0,
       totalCorrect: 0,
-      questions: [
-        {
-          q: "What is 2 + 2?",
-          answers: [
-            {
-              text: "4",
-              is_correct: true,
-            },
-            {
-              text: "3",
-              is_correct: false,
-            },
-            {
-              text: "Fish",
-              is_correct: false,
-            },
-            {
-              text: "5",
-              is_correct: false,
-            },
-          ],
-        },
-        {
-          q: 'How many letters are in the word "Banana"?',
-          answers: [
-            {
-              text: "5",
-              is_correct: false,
-            },
-            {
-              text: "7",
-              is_correct: false,
-            },
-            {
-              text: "6",
-              is_correct: true,
-            },
-            {
-              text: "12",
-              is_correct: false,
-            },
-          ],
-        },
-        {
-          q: "Find the missing letter: C_ke",
-          answers: [
-            {
-              text: "e",
-              is_correct: false,
-            },
-            {
-              text: "a",
-              is_correct: true,
-            },
-            {
-              text: "i",
-              is_correct: false,
-            },
-          ],
-        },
-      ],
+      questions: [],
       results: [
         {
           min: 0,
           max: 2,
-          title: "Try again!",
-          desc: "Do a little more studying and you may succeed!",
+          title: "Tente novamente!",
+          desc: "Estude um pouco mais e poderá ter sucesso!",
         },
         {
           min: 3,
           max: 3,
-          title: "Wow, you're a genius!",
-          desc: "Studying has definitely paid off for you!",
+          title: "Uau, você é um génio!",
+          desc: "O estudo definitivamente compensou para você!",
         },
       ],
     };
   },
   methods: {
+    fetchQuestions() {
+      axios
+        .get("http://127.0.0.1:8000/api/questions/questionnaires/2/")
+        .then((response) => {
+          const questionnaireId = response.data.questions;
+          this.loadQuestions(questionnaireId);
+          this.showModal = true;
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar o questionário", error);
+        });
+    },
+    loadQuestions(questionnaireId) {
+      axios
+        .get(
+          `http://127.0.0.1:8000/api/questions/questions/?questionnaire=${questionnaireId}`
+        )
+        .then((response) => {
+          this.questions = response.data.map((q) => ({
+            q: q.question_text,
+            answers: q.options,
+          }));
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar perguntas", error);
+        });
+    },
     closeModal() {
       this.showModal = false;
+      this.reset();
     },
     questionAnswered(isCorrect) {
       if (isCorrect) {
         this.totalCorrect++;
       }
-      if (this.questionsAnswered < this.questions.length - 1) {
-        this.questionsAnswered++;
-      } else {
-        // Close the modal after the last question
+      this.questionsAnswered++;
+      if (this.questionsAnswered >= this.questions.length) {
         this.showModal = false;
       }
     },
