@@ -1,4 +1,3 @@
-<!-- components/ModalComponent.vue -->
 <template>
   <div class="modal-overlay" v-show="isVisible" @click.self="closeModal">
     <div class="modal-content" @click.stop>
@@ -20,12 +19,8 @@
 
 <script>
 export default {
-  props: {
-    isVisible: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  props: ["isVisible"],
+  emits: ["update:isVisible"],
   methods: {
     closeModal() {
       this.$emit("update:isVisible", false);

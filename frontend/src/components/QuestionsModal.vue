@@ -23,7 +23,7 @@ export default {
   components: {
     ModalComponent,
   },
-  props: ["show"],
+  props: ["show", "title"],
   emits: ["close"],
   methods: {
     close() {

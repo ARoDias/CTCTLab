@@ -1,3 +1,5 @@
+/* frontend/src/assets/style.css */
+
 /* Define color variables */
 :root {
   --primary-blue: #446ebc; /* Primary Blue */
@@ -9,6 +11,20 @@
   --dark-gray: #333; /* Dark Gray */
   --black: #000; /* Black */
   --border-radius: 10px; /* Border radius for rounded corners */
+
+  /* Additional colors from QuestionComponent.vue */
+  --vt-c-black: #181818; /* Black for text */
+  --vt-c-indigo: #2c3e50; /* Indigo */
+  --color-border-hover: rgba(60, 60, 60, 0.12); /* Border hover color */
+}
+
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--primary-green);
+  color: var(--vt-c-black); /* Updated to use variable */
+  line-height: 1.6;
+  font-size: 20px; /* Consolidated font-size */
 }
 
 /* Main Content Styling */
@@ -47,13 +63,14 @@ nav {
 nav a {
   color: var(--white);
   text-decoration: none;
-  padding: 10px;
+  padding: 4px;
 }
 
 /* Hover State for Navigation Bar Links */
 nav a:hover {
   color: var(--white);
   background-color: var(--secondary-blue);
+  border-radius: var(--border-radius);
 }
 
 /* Specific Styling for Bootstrap Navigation Bar */
@@ -94,12 +111,6 @@ h2 {
   background-color: var(--white);
   margin: 16px;
   border-radius: 4px;
-}
-
-/* Body Styling */
-body {
-  font-family: Arial, sans-serif;
-  background-color: var(--primary-green);
 }
 
 /* Form Styling */
