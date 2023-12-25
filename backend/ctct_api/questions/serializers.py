@@ -149,3 +149,17 @@ class StudentQuestionnaireResponseSerializer(serializers.ModelSerializer):
         model = StudentQuestionnaireResponse
         fields = ['student', 'questionnaire', 'answered_on', 'response_details']
         read_only_fields = ['answered_on']
+
+class DetailedQuestionSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = ['id', 'question_text', 'question_type', 'options']
+
+class DetailedQuestionnaireSerializer(serializers.ModelSerializer):
+    questions = DetailedQuestionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Questionnaire
+        fields = ['id', 'title', 'description', 'questions']

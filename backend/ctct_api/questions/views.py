@@ -3,7 +3,7 @@
 # Import necessary modules and classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .models import (Option, QuestionnaireQuestion, Activity, Week, FileSubmission, 
                      Question, Questionnaire, Answer, ActivityAttempt, 
                      StudentQuestionnaireResponse, QuestionResponseDetail)
@@ -12,7 +12,7 @@ from .serializers import (ActivitySerializer, ActivityAttemptSerializer,
                           QuestionSerializer, QuestionnaireSerializer, 
                           AnswerSerializer, OptionSerializer, 
                           QuestionnaireQuestionSerializer, 
-                          StudentQuestionnaireResponseSerializer, 
+                          StudentQuestionnaireResponseSerializer, DetailedQuestionnaireSerializer,
                           QuestionResponseDetailSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from users.models import StudentGroup
@@ -88,3 +88,18 @@ class StudentQuestionnaireResponseViewSet(viewsets.ModelViewSet):
 class QuestionResponseDetailViewSet(viewsets.ModelViewSet):
     queryset = QuestionResponseDetail.objects.all()
     serializer_class = QuestionResponseDetailSerializer
+
+class DetailedQuestionnaireViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Questionnaire.objects.all()
+    serializer_class = DetailedQuestionnaireSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_questionnaires_for_activity(request, activity_id):
+    try:
+        activity = Activity.objects.get(id=activity_id, week__number=request.query_params.get('week_number'))
+        questionnaires = Questionnaire.objects.filter(activity=activity)
+        serializer = DetailedQuestionnaireSerializer(questionnaires, many=True)
+        return Response(serializer.data)
+    except Activity.DoesNotExist:
+        return Response({'error': 'Activity not found'}, status=status.HTTP_404_NOT_FOUND)
