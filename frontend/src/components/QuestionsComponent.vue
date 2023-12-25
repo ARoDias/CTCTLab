@@ -47,29 +47,29 @@ body {
 }
 .question {
   width: 100%;
-  padding: 20px;
-  font-size: 32px;
+  padding: 10px;
+  font-size: 22px;
   font-weight: bold;
   text-align: center;
-  background-color: #00ca8c;
-  color: #fff;
+  background-color: var(--primary-green);
+  color: var(--white);
   box-sizing: border-box;
 }
 /* Styles for question options */
 .answer {
-  border: 1px solid #8e959f;
-  padding: 20px;
+  border: 1px solid var(--secondary-blue);
+  padding: 10px;
   font-size: 18px;
   width: 100%;
-  background-color: #fff;
-  color: #000; /* Text color black */
-  transition: background-color 0.2s, color 0.2s;
+  background-color: var(--white);
+  color: var(--black);
+  transition: background-color 0.1s, color 0.1s;
 }
 
 /* Hover effect for question options */
 .answer:hover {
-  background-color: #e6ecf1; /* Light grey background on hover */
-  color: #446ebc; /* Primary blue text color on hover */
+  background-color: var(--white);
+  color: var(--primary-blue);
 }
 
 .answer span {
@@ -83,8 +83,8 @@ body {
   cursor: pointer;
 }
 .answer:not(.is-answered):hover {
-  background-color: #8ce200;
-  border-color: #8ce200;
-  color: #fff;
+  background-color: var(--secondary-blue);
+  border-color: var(--primary-green);
+  color: var(--white);
 }
 </style>
