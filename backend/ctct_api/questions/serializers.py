@@ -1,19 +1,23 @@
 
 # backend/ctct_api/questions/serializers.py
+
+# Import necessary modules and models
 from rest_framework import serializers
 from .models import (Activity, Week, ActivityParticipation, ActivityAttempt,
                      FileSubmission, DownloadableContent, QuestionnaireQuestion,
-                     Question, Option, Questionnaire, Answer)
+                     Question, Option, Questionnaire, Answer, 
+                     QuestionResponseDetail, StudentQuestionnaireResponse)
 from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
 
-# Week Model Serializer
+# Serializer for the Week model
 class WeekSerializer(serializers.ModelSerializer):
     class Meta:
         model = Week
         fields = ['id', 'number', 'theme']
 
-# Activity Model Serializer with Nested Classroom, Teacher, and Week Data
+# Serializer for the Activity model with nested data
 class ActivitySerializer(serializers.ModelSerializer):
+    # Using slug fields for readable representations of related objects
     classroom = serializers.SlugRelatedField(slug_field="name", read_only=True)
     teacher = TeacherProfileSerializer(read_only=True)
     week = serializers.SlugRelatedField(slug_field="theme", read_only=True)
@@ -22,20 +26,19 @@ class ActivitySerializer(serializers.ModelSerializer):
         model = Activity
         fields = '__all__'
 
-# Serializer for ActivityAttempt
+# Serializer for the ActivityAttempt model
 class ActivityAttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityAttempt
         fields = ['id', 'student', 'activity', 'start_time', 'end_time', 'score']
 
-
-# Activity Participation Model Serializer
+# Serializer for the ActivityParticipation model
 class ActivityParticipationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityParticipation
         fields = ['id', 'student', 'activity', 'response']
 
-# File Submission Model Serializer with Nested Activity and Student Data
+# Serializer for the FileSubmission model with nested activity and student data
 class FileSubmissionSerializer(serializers.ModelSerializer):
     activity = ActivitySerializer(read_only=True)
     student = StudentProfileSerializer(read_only=True)
@@ -44,7 +47,7 @@ class FileSubmissionSerializer(serializers.ModelSerializer):
         model = FileSubmission
         fields = ['id', 'activity', 'student', 'submitted_file', 'timestamp']
 
-# Downloadable Content Model Serializer with Nested Week Data
+# Serializer for the DownloadableContent model with nested week data
 class DownloadableContentSerializer(serializers.ModelSerializer):
     week = serializers.SlugRelatedField(slug_field="theme", read_only=True)
 
@@ -52,17 +55,20 @@ class DownloadableContentSerializer(serializers.ModelSerializer):
         model = DownloadableContent
         fields = ['id', 'title', 'week', 'file', 'uploaded_at']
 
+# Serializer for the Option model
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
         fields = '__all__'
 
+# Serializer for the Question model including related options
 class QuestionSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)
 
     class Meta:
         model = Question
         fields = '__all__'
+
     def create(self, validated_data):
         options_data = validated_data.pop('options')
         question = Question.objects.create(**validated_data)
@@ -70,6 +76,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             Option.objects.create(question=question, **option_data)
         return question
 
+# Serializer for the Questionnaire model
 class QuestionnaireSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
 
@@ -78,21 +85,49 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'activity', 'questions']
 
     def get_questions(self, obj):
-        # Fetch only question IDs to reduce load
+        # Return a list of question IDs associated with the questionnaire
         return obj.questions.values_list('id', flat=True)
 
+# Serializer for the Answer model
 class AnswerSerializer(serializers.ModelSerializer):
-    question = QuestionSerializer(read_only=True)
+    is_correct = serializers.ReadOnlyField()  # Ensure this field is read-only
+
     class Meta:
         model = Answer
-        fields = '__all__'
+        fields = ['id', 'question', 'student', 'selected_option', 'is_correct']
 
-class OptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Option
-        fields = '__all__'
+    # Custom create method to set is_correct based on the selected option
+    def create(self, validated_data):
+        selected_option = validated_data.get('selected_option')
+        is_correct = selected_option.is_correct if selected_option else False
+        answer = Answer.objects.create(**validated_data, is_correct=is_correct)
+        return answer
 
+    # Custom update method to handle updates to the selected option
+    def update(self, instance, validated_data):
+        selected_option = validated_data.get('selected_option')
+        if selected_option:
+            instance.selected_option = selected_option
+            instance.is_correct = selected_option.is_correct
+        instance.save()
+        return instance
+
+# Serializer for the QuestionnaireQuestion model
 class QuestionnaireQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionnaireQuestion
         fields = ['id', 'questionnaire', 'question', 'order']
+
+# Serializer for the QuestionResponseDetail model
+class QuestionResponseDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionResponseDetail
+        fields = ['question', 'selected_option', 'is_correct']
+
+# Serializer for the StudentQuestionnaireResponse model
+class StudentQuestionnaireResponseSerializer(serializers.ModelSerializer):
+    response_details = QuestionResponseDetailSerializer(many=True)
+
+    class Meta:
+        model = StudentQuestionnaireResponse
+        fields = ['student', 'questionnaire', 'answered_on', 'response_details']

@@ -2,20 +2,21 @@
 from django.db import models
 import datetime
 
-# Model for an academic week
 class Week(models.Model):
-    number = models.IntegerField(unique=True)
+    # Unique identifier for each academic week, indexed for efficient querying
+    number = models.IntegerField(unique=True, db_index=True)
     theme = models.CharField(max_length=100)
     start_date = models.DateField(default=datetime.date.today)
     end_date = models.DateField(default=datetime.date.today)
     description = models.TextField(default="No description provided.")
-    
+
     def __str__(self):
         return f"Week {self.number}: {self.theme}"
 
-# Activity Model
+
 class Activity(models.Model):
-    title = models.CharField(max_length=255)
+    # Title of the activity, indexed for efficient searching
+    title = models.CharField(max_length=255, db_index=True)
     description = models.TextField(null=True, blank=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -27,32 +28,32 @@ class Activity(models.Model):
         return self.title
 
 class Questionnaire(models.Model):
-    title = models.CharField(max_length=255)
+    # Title of the questionnaire, indexed for efficient searching
+    title = models.CharField(max_length=255, db_index=True)
     description = models.TextField()
-    # Add a related_name for the reverse relation from Questionnaire to Question
     questions = models.ManyToManyField('Question', through='QuestionnaireQuestion', related_name='questionnaires')
     activity = models.ForeignKey(Activity, on_delete=models.SET_NULL, null=True, blank=True)
 
     def get_ordered_questions(self):
+        # Retrieves questions in the order specified in the through model
         return [qq.question for qq in self.questionnairequestion_set.all().order_by('order')]
 
     def __str__(self):
         return f"Questionnaire: {self.title}"
 
 class Question(models.Model):
+    # Defines question types (e.g., MCQ, True/False, Likert Scale)
     QUESTION_TYPES = (
         ('MCQ', 'Multiple Choice Question'),
         ('TF', 'True/False'),
         ('L', 'Likert Scale'),
     )
-    question_text = models.CharField(max_length=255)
+    question_text = models.CharField(max_length=255, db_index=True)
     question_type = models.CharField(max_length=10, choices=QUESTION_TYPES)
-    # Specify a related_name for the reverse relation from Question to Questionnaire
     questionnaire = models.ForeignKey('Questionnaire', on_delete=models.CASCADE, related_name='questions_in_questionnaire', null=True)
 
     def __str__(self):
         return f"Question ID {self.id} - {self.question_text}"
-
 
 class Option(models.Model):
     # Each option is linked to a specific question
@@ -62,7 +63,6 @@ class Option(models.Model):
 
     def __str__(self):
         return f"Option for Question ID {self.question.id}: {self.option_text} - {'Correct' if self.is_correct else 'Incorrect'}"
-
 
 class QuestionnaireQuestion(models.Model):
     # Intermediate model to define the order of questions in a questionnaire
@@ -77,39 +77,38 @@ class QuestionnaireQuestion(models.Model):
     def __str__(self):
         return f"Question {self.order} in {self.questionnaire.title}"
 
-# Model for an answer to a question
 class Answer(models.Model):
+    # Stores a student's answer to a question
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE)
-    # Allow nulls for selected_option if an answer hasn't been selected yet
     selected_option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        # Handle the possibility of selected_option being None
         selected_option_text = self.selected_option.option_text if self.selected_option else "No answer selected"
         return f"Answer by {self.student.user.get_full_name()} for {self.question.question_text}: {selected_option_text}"
 
-# Model for tracking activity attempts by students
 class ActivityAttempt(models.Model):
+    # Tracks an attempt by a student to complete an activity
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE, verbose_name=("Student"))
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, verbose_name=("Activity"))
     start_time = models.DateTimeField(verbose_name=("Start Time"))
     end_time = models.DateTimeField(verbose_name=("End Time"))
     score = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=("Score"))
 
-    def __str__(self):
-        return f"{self.student.user.get_full_name()} - {self.activity.title} Attempt"
-
     @property
     def duration(self):
+        # Calculates the duration of the activity attempt
         return (self.end_time - self.start_time).total_seconds()
 
     class Meta:
         verbose_name = ("Activity Attempt")
         verbose_name_plural = ("Activity Attempts")
 
-# Model for tracking activity participation by students
+    def __str__(self):
+        return f"{self.student.user.get_full_name()} - {self.activity.title} Attempt"
+
 class ActivityParticipation(models.Model):
+    # Records a student's participation in an activity
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE)
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     response = models.TextField(null=True, blank=True)
@@ -117,8 +116,8 @@ class ActivityParticipation(models.Model):
     def __str__(self):
         return f"Participação de {self.student.user.get_full_name()} em {self.activity.title}"
 
-# Model for handling file submissions by students
 class FileSubmission(models.Model):
+    # Tracks file submissions by students for activities
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE)
     submitted_file = models.FileField(upload_to='activity_submissions/')
@@ -127,12 +126,40 @@ class FileSubmission(models.Model):
     def __str__(self):
         return f"Submissão de {self.student.user.get_full_name()} para {self.activity.title}"
 
-# Model for downloadable content available to students
 class DownloadableContent(models.Model):
-    title = models.CharField(max_length=255)
+    # Represents downloadable content associated with a week of the academic calendar
+    title = models.CharField(max_length=255, db_index=True)
     week = models.ForeignKey(Week, on_delete=models.CASCADE)
     file = models.FileField(upload_to='downloadable_content/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Conteúdo: {self.title} (Semana {self.week.number})"
+
+class StudentQuestionnaireResponse(models.Model):
+    # Records a student's response to a questionnaire
+    student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE)
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    answered_on = models.DateTimeField(auto_now_add=True)  # Timestamp of the response
+
+    def __str__(self):
+        return f"{self.student.user.get_full_name()} - {self.questionnaire.title} Response"
+
+class QuestionResponseDetail(models.Model):
+    # Details of a student's response to a specific question in a questionnaire
+    student_response = models.ForeignKey(StudentQuestionnaireResponse, related_name='response_details', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    selected_option = models.ForeignKey(Option, on_delete=models.CASCADE)
+    is_correct = models.BooleanField(default=False)  # Will be set based on the selected_option
+
+    def save(self, *args, **kwargs):
+        """
+        Override the save method to set is_correct based on the selected_option's correctness.
+        """
+        if self.selected_option:
+            self.is_correct = self.selected_option.is_correct
+        super(QuestionResponseDetail, self).save(*args, **kwargs)
+
+    def __str__(self):
+        correct_text = 'Correct' if self.is_correct else 'Incorrect'
+        return f"Response to Question ID {self.question.id} - {correct_text}"
