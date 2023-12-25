@@ -59,7 +59,7 @@ class DownloadableContentSerializer(serializers.ModelSerializer):
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = '__all__'
+        fields = ['id', 'option_text', 'is_correct']
 
 # Serializer for the Question model including related options
 class QuestionSerializer(serializers.ModelSerializer):
@@ -120,14 +120,32 @@ class QuestionnaireQuestionSerializer(serializers.ModelSerializer):
 
 # Serializer for the QuestionResponseDetail model
 class QuestionResponseDetailSerializer(serializers.ModelSerializer):
+    # Use a PrimaryKeyRelatedField for selected_option to allow POSTing the option ID
+    selected_option = serializers.PrimaryKeyRelatedField(queryset=Option.objects.all())
+
     class Meta:
         model = QuestionResponseDetail
-        fields = ['question', 'selected_option', 'is_correct']
+        fields = ['student_response', 'question', 'selected_option', 'is_correct']
+        read_only_fields = ['is_correct']
+
+    def create(self, validated_data):
+        # Ensure the selected option belongs to the question
+        question = validated_data.get('question')
+        selected_option = validated_data.get('selected_option')
+        if selected_option.question != question:
+            raise serializers.ValidationError("The selected option does not belong to the specified question.")
+        
+        # Set is_correct based on the selected option's correctness
+        validated_data['is_correct'] = selected_option.is_correct
+        return QuestionResponseDetail.objects.create(**validated_data)
+
+
 
 # Serializer for the StudentQuestionnaireResponse model
 class StudentQuestionnaireResponseSerializer(serializers.ModelSerializer):
-    response_details = QuestionResponseDetailSerializer(many=True)
+    response_details = QuestionResponseDetailSerializer(many=True, read_only=True)
 
     class Meta:
         model = StudentQuestionnaireResponse
         fields = ['student', 'questionnaire', 'answered_on', 'response_details']
+        read_only_fields = ['answered_on']

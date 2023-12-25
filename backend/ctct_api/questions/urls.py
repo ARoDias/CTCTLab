@@ -13,8 +13,8 @@ router.register(r'questions', views.QuestionViewSet)
 router.register(r'answers', views.AnswerViewSet)
 router.register(r'options', views.OptionViewSet)
 router.register(r'questionnairequestions', views.QuestionnaireQuestionViewSet)
-router.register(r'studentresponses', views.StudentQuestionnaireResponseViewSet)  # New route for StudentQuestionnaireResponse
-router.register(r'questionresponsedetails', views.QuestionResponseDetailViewSet)  # New route for QuestionResponseDetail
+router.register(r'studentresponses', views.StudentQuestionnaireResponseViewSet)  
+router.register(r'questionresponsedetails', views.QuestionResponseDetailViewSet)  
 
 # Define URL patterns
 urlpatterns = [
