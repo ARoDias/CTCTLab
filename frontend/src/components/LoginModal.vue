@@ -46,8 +46,9 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiClient from "@/axiosConfig";
 import ModalComponent from "@/components/ModalComponent.vue";
+
 export default {
   components: {
     ModalComponent,
@@ -57,13 +58,13 @@ export default {
       username: "",
       password: "",
       showModal: true,
-      errorMessage: "", // Mensagem de erro
+      errorMessage: "",
     };
   },
   methods: {
     closeModal() {
       this.showModal = false;
-      this.errorMessage = ""; // Clears the error message when modal is closed
+      this.errorMessage = "";
       document.title = "CTCTLab";
       this.$emit("closeModal");
     },
@@ -72,21 +73,27 @@ export default {
     },
     async submitLogin() {
       try {
-        const response = await axios.post("/api/users/login/", {
+        const response = await apiClient.post("/api/users/login/", {
           username: this.username,
           password: this.password,
         });
 
-        const token = response.data.key;
+        // Assume que o backend envia o token com a chave 'key'.
+        const token = response.data.key; // Certifica-te que o nome da chave está correto.
         if (token) {
+          // Atualiza o Vuex store e o armazenamento local
+          this.$store.dispatch("updateAuthToken", token);
           localStorage.setItem("userToken", token);
-          this.$store.dispatch("updateCurrentUser", {
-            user: response.data.user_id,
-            token: token,
+          // Atualiza o estado do utilizador com o ID do utilizador
+          await this.$store.dispatch("updateCurrentUser", {
+            id: response.data.user_id,
           });
+
+          // Redireciona ou executa ações adicionais após o login bem-sucedido
           this.$router.push("/");
           this.closeModal();
         } else {
+          // Se não houver token, apresenta uma mensagem de erro.
           this.errorMessage =
             "Login falhou. Por favor, verifica as tuas credenciais.";
         }
@@ -97,6 +104,7 @@ export default {
       }
     },
   },
+
   created() {
     document.title = "Login";
   },

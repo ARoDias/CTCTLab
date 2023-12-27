@@ -6,7 +6,7 @@
       <!-- Meta tags for responsive design and character encoding -->
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>CTCTOnlineHub</title>
+      <title>CTCTLab</title>
 
       <!-- Main title of the application -->
       <h1 style="text-align: center">
@@ -40,82 +40,74 @@ export default {
   components: {
     NavbarComponent,
   },
-  data() {
-    return {
-      currentUser: null, // Current user's data
-      tasks: [], // Task data for the user
-      loggedIn: false, // Boolean to track if the user is logged in
-      home: true, // Boolean to determine if the home page should be displayed
-      week: 1, // Current week number for display
-    };
+  computed: {
+    // Computed properties to access the state from the Vuex store
+    currentUser() {
+      return this.$store.getters.getCurrentUser;
+    },
+    loggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    tasks() {
+      // Assuming you have a getter for tasks in your store
+      return this.$store.getters.getTasks;
+    },
   },
   created() {
+    // Check if the user is already logged in when the component is created
     this.checkLoginStatus();
   },
   methods: {
     checkLoginStatus() {
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        this.loggedIn = true;
-        this.fetchCurrentUser(token);
-        this.fetchTasks(token);
+      // Check if the user is logged in using Vuex getters
+      if (this.loggedIn) {
+        this.fetchCurrentUser();
+        this.fetchTasks();
       }
     },
     fetchCurrentUser() {
-      // Retrieve the JWT token from localStorage
-      const token = localStorage.getItem("userToken");
+      // Use the token from Vuex store for API requests
+      const token = this.$store.getters.getAuthToken;
       if (token) {
-        // If token exists, fetch the current user's data from the API
+        // Fetch the current user's data from the API
         this.$axios
           .get("/api/users/currentUser", {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
-            this.currentUser = response.data;
-            this.loggedIn = true;
+            // Update Vuex store with the current user's data
+            this.$store.dispatch("updateCurrentUser", response.data);
           })
           .catch((error) => {
             console.error("Error fetching user data:", error);
-            this.loggedIn = false;
+            // Handle error, for example by redirecting to login
           });
-      } else {
-        console.log("User is not logged in.");
-        this.loggedIn = false;
       }
     },
     fetchTasks() {
-      const token = localStorage.getItem("userToken");
+      // Use the token from Vuex store for API requests
+      const token = this.$store.getters.getAuthToken;
       if (token) {
-        // If token exists, fetch tasks from the API
+        // Fetch tasks from the API
         this.$axios
           .get("/api/questions/tasks/", {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
-            this.tasks = response.data;
-            this.loggedIn = true;
+            // Update Vuex store with the tasks data
+            this.$store.dispatch("updateTasks", response.data);
           })
           .catch((error) => {
             console.error("Error fetching tasks data:", error);
-            this.loggedIn = false;
+            // Handle error, for example by showing a message to the user
           });
-      } else {
-        console.log("User is not logged in.");
-        this.loggedIn = false;
       }
     },
     logOut() {
-      // Log out the user by resetting relevant data properties
-      this.loggedIn = false;
-      this.currentUser = null;
-      localStorage.removeItem("userToken"); // Remove the token from localStorage
-      this.$emit("logout"); // Emit a logout event to inform other components
-    },
-    logIn(user) {
-      // Log in the user by setting the currentUser and loggedIn properties
-      this.loggedIn = true;
-      this.currentUser = user;
-      // Additional login operations can be performed here
+      // Use Vuex action to log out the user
+      this.$store.dispatch("logout");
+      // Redirect to the login page or home page as needed
+      this.$router.push("/login");
     },
   },
 };

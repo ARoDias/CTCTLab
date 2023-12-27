@@ -255,8 +255,12 @@ export default {
             setCookie("user_registered", "true", 1);
             setCookie("user_type", "student", 1);
             setCookie("user_id", response.data.user_id, 1);
+            // Atualizar a Vuex store após o registo bem-sucedido
+            this.$store.dispatch("updateAuthToken", response.data.token);
+            this.$store.dispatch("updateCurrentUser", response.data.user);
+            // Redirecionar o utilizador para a página inicial ou apropriada
+            this.$router.push("/");
             this.closeModal();
-            this.$router.push("/questions/week/:weekNumber");
           });
       } catch (error) {
         if (

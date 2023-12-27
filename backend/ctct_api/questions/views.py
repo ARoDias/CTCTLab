@@ -96,10 +96,23 @@ class DetailedQuestionnaireViewSet(viewsets.ReadOnlyModelViewSet):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_questionnaires_for_activity(request, activity_id):
+    week_number = request.query_params.get('week_number')
+    print(f"Recebido - Atividade: {activity_id}, Semana: {week_number}") # Adiciona isto
+    # Resto do código
+    print(request.query_params);
+
     try:
-        activity = Activity.objects.get(id=activity_id, week__number=request.query_params.get('week_number'))
+        # Localização da atividade especificada juntamente com a semana
+        activity = Activity.objects.get(id=activity_id, week__number=week_number)
+
+        # Filtragem de questionários associados à atividade
         questionnaires = Questionnaire.objects.filter(activity=activity)
+
+        # Serialização dos dados dos questionários
         serializer = DetailedQuestionnaireSerializer(questionnaires, many=True)
+
         return Response(serializer.data)
     except Activity.DoesNotExist:
+        # Logging e resposta em caso de atividade não encontrada
+        print(f"A atividade com ID {activity_id} e semana {week_number} não foi encontrada.")
         return Response({'error': 'Activity not found'}, status=status.HTTP_404_NOT_FOUND)
