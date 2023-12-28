@@ -107,34 +107,29 @@ export default {
       this.showModal = false;
       this.reset();
     },
+    // Método para enviar a resposta do aluno
     sendResponse(questionId, selectedOptionId) {
-      // Verifica se o ID do questionário está definido
-      if (!this.currentQuestionnaireId) {
-        alert("Erro ao identificar o questionário. Tenta novamente.");
-        return;
-      }
-
-      // Obtém o ID do estudante autenticado
-      const studentId = this.$store.getters.getCurrentUser?.id;
-      if (!studentId) {
+      // Verifica se o ID do questionário e do aluno estão definidos
+      const studentId = this.$store.getters.getStudentId; // Supondo que você tem um getter para o id do perfil do estudante
+      if (!this.currentQuestionnaireId || !studentId) {
         alert(
-          "Não foi possível identificar o utilizador. Por favor, faça login novamente."
+          "Erro ao identificar o questionário ou o estudante. Tenta novamente."
         );
         return;
       }
 
-      // Cria a StudentQuestionnaireResponse
+      // Prepara os dados da resposta do questionário
       const studentQuestionnaireResponse = {
-        student: studentId,
+        student: studentId, // ID do perfil do estudante, não do usuário
         questionnaire: this.currentQuestionnaireId,
       };
 
-      // Envia a StudentQuestionnaireResponse
+      // Envia a resposta do questionário
       apiClient
         .post("/api/questions/studentresponses/", studentQuestionnaireResponse)
         .then((response) => {
-          const studentResponseId = response.data.id;
-          // Agora com o ID da resposta do questionário, envia a resposta da pergunta
+          // Agora envia a resposta detalhada para cada pergunta
+          const studentResponseId = response.data.id; // ID da resposta do questionário
           const questionResponseDetail = {
             student_response: studentResponseId,
             question: questionId,
@@ -145,14 +140,12 @@ export default {
             questionResponseDetail
           );
         })
-        .then((response) => {
-          console.log("Resposta enviada com sucesso:", response.data);
+        .then(() => {
+          console.log("Resposta enviada com sucesso.");
         })
         .catch((error) => {
-          console.error("Erro ao enviar resposta da questão:", error);
-          alert(
-            "Ocorreu um erro ao enviar a resposta. Por favor, tente novamente."
-          );
+          console.error("Erro ao enviar resposta:", error.response.data);
+          alert("Erro ao enviar a resposta. Por favor, tente novamente.");
         });
     },
 

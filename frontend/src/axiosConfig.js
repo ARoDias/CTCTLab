@@ -1,6 +1,7 @@
 // src/axiosConfig.js
 import axios from "axios";
 import store from "./store";
+
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
@@ -13,10 +14,13 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = store.getters.getAuthToken;
-    //console.log("Token obtido:", token);
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+    // Exclude the Authorization header for login requests
+    if (config.url !== "/api/users/login/") {
+      const token = store.getters.getAuthToken;
+      //console.log(token);
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
     }
     return config;
   },
