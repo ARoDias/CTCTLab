@@ -64,8 +64,8 @@ export default {
   },
   methods: {
     fetchActivityQuestionnaires() {
-      const url = `/api/questions/activities/2/questionnaires/?week_number=3`;
-      console.log("Requesting GET to:", url); // Logging for debugging
+      const url = `/api/questions/activities/${this.currentActivity}/questionnaires/?week_number=${this.currentWeek}`;
+      //console.log("Requesting GET to:", url); // Logging for debugging
       apiClient
         .get(url)
         .then((response) => {
@@ -110,13 +110,19 @@ export default {
     // Método para enviar a resposta do aluno
     sendResponse(questionId, selectedOptionId) {
       // Verifica se o ID do questionário e do aluno estão definidos
-      const studentId = this.$store.getters.getStudentId; // Supondo que você tem um getter para o id do perfil do estudante
+      const studentId = this.$store.getters.getCurrentUser; // Supondo que você tem um getter para o id do perfil do estudante
       if (!this.currentQuestionnaireId || !studentId) {
         alert(
           "Erro ao identificar o questionário ou o estudante. Tenta novamente."
         );
         return;
       }
+      console.log(
+        "Enviando resposta com studentId:",
+        studentId,
+        "e questionnaireId:",
+        this.currentQuestionnaireId
+      );
 
       // Prepara os dados da resposta do questionário
       const studentQuestionnaireResponse = {
@@ -135,6 +141,7 @@ export default {
             question: questionId,
             selected_option: selectedOptionId,
           };
+
           return apiClient.post(
             "/api/questions/questionresponsedetails/",
             questionResponseDetail
@@ -168,7 +175,19 @@ export default {
         return;
       }
 
-      const studentId = this.$store.getters.getCurrentUser?.id;
+      const studentId = this.$store.getters.getCurrentUser.user;
+      console.log(
+        "Current user from Vuex store:",
+        this.$store.getters.getCurrentUser
+      );
+
+      console.log(
+        "Enviando resposta com studentId:",
+        studentId,
+        "e questionnaireId:",
+        this.currentQuestionnaireId
+      );
+
       if (!studentId) {
         alert(
           "Não foi possível identificar o utilizador. Por favor, faça login novamente."
@@ -181,6 +200,12 @@ export default {
         student: studentId,
         questionnaire: this.currentQuestionnaireId,
       };
+      console.log(
+        "Enviando resposta com studentId:",
+        studentId,
+        "e questionnaireId:",
+        this.currentQuestionnaireId
+      );
 
       let url = `/api/questions/studentresponses/`;
       apiClient
