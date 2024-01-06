@@ -1,20 +1,20 @@
 // src/store.js
-// Importing necessary module to create Vuex store
 import { createStore } from "vuex";
 
 const store = createStore({
   // State of the Vuex store
   state: {
-    // currentUser holds the data of the logged-in user, initially null
     currentUser: null,
-    // authToken holds the authentication token, initially fetched from localStorage
+    studentProfileId: null,
     authToken: localStorage.getItem("userToken") || null,
   },
   // Mutations to change the state
   mutations: {
-    // Set the currentUser in the state
     setCurrentUser(state, user) {
       state.currentUser = user;
+    },
+    setStudentProfileId(state, id) {
+      state.studentProfileId = id;
     },
     // Set the authToken in the state and localStorage
     setAuthToken(state, token) {
@@ -33,6 +33,9 @@ const store = createStore({
     updateCurrentUser({ commit }, user) {
       commit("setCurrentUser", user);
     },
+    updateStudentProfileId({ commit }, id) {
+      commit("setStudentProfileId", id);
+    },
     // Update the authToken in the state
     updateAuthToken({ commit }, token) {
       commit("setAuthToken", token);
@@ -45,11 +48,9 @@ const store = createStore({
   },
   // Getters to access state values
   getters: {
-    // Get the current user from the state
     getCurrentUser: (state) => state.currentUser,
-    // Check if a user is logged in
+    getStudentProfileId: (state) => state.studentProfileId,
     isLoggedIn: (state) => !!state.currentUser,
-    // Get the authentication token from the state
     getAuthToken: (state) => state.authToken, // Getter for the token
   },
 });

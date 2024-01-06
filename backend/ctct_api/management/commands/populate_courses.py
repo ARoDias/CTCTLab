@@ -1,4 +1,4 @@
-# CTCTBooster/management/commands/populate_courses.py
+# CTCTLab/ctct_api/management/commands/populate_courses.py
 from django.core.management.base import BaseCommand
 from users.models import Course
 

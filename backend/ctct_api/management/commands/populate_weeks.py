@@ -1,4 +1,4 @@
-# CTCTBooster/management/commands/populate_weeks.py
+# CTCTLab/ctct_api/management/commands/populate_weeks.py
 from django.core.management.base import BaseCommand
 from questions.models import Week
 

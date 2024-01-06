@@ -97,9 +97,6 @@ class DetailedQuestionnaireViewSet(viewsets.ReadOnlyModelViewSet):
 @permission_classes([IsAuthenticated])
 def get_questionnaires_for_activity(request, activity_id):
     week_number = request.query_params.get('week_number')
-    print(f"Recebido - Atividade: {activity_id}, Semana: {week_number}") # Adiciona isto
-    # Resto do código
-    print(request.query_params);
 
     try:
         # Localização da atividade especificada juntamente com a semana

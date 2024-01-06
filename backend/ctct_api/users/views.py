@@ -74,7 +74,6 @@ class CustomLoginView(APIView):
                 # Generate JWT token for authentication
                 refresh = RefreshToken.for_user(user)
                 token = str(refresh.access_token)
-                print(f"Token recebido: {token}")
 
                 # Determine user type (student, teacher, admin)
                 user_type = "student" if hasattr(user, 'is_student') and user.is_student else "teacher" if hasattr(user, 'is_teacher') and user.is_teacher else "admin" if user.is_superuser else "unauthorized"

@@ -52,7 +52,7 @@ export default {
       questions: [],
       questionnaireTitle: "",
       results: [], // Configuration for results
-      currentActivity: 2, // Example activity ID
+      currentActivity: 1, // Example activity ID
       currentWeek: 3, // Example week number
       questionnaires: [], // To store questionnaires for the current activity
       currentQuestionnaireId: null, // To keep track of the current questionnaire ID
