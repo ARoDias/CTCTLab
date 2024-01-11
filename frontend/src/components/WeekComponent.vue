@@ -11,12 +11,12 @@
     <div v-else>
       <p>Verificar que está a funcionar... aluno</p>
       <!-- Loop through activities and display them -->
-      <div v-for="activity in activities" :key="activity.id">
+      <!-- <div v-for="activity in activities" :key="activity.id">
         <h3>{{ activity.title }}</h3>
         <p>{{ activity.description }}</p>
         <p>Verificar que está a funcionar...</p>
-        <!-- Outras informações da atividade -->
-      </div>
+         Outras informações da atividade 
+     </div>  -->
     </div>
   </div>
 </template>

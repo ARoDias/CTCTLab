@@ -3,12 +3,13 @@
 
 # Import necessary modules and models
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 from .models import (Activity, Week, ActivityParticipation, ActivityAttempt,
                      FileSubmission, DownloadableContent, QuestionnaireQuestion,
                      Question, Option, Questionnaire, Answer, 
                      QuestionResponseDetail, StudentQuestionnaireResponse)
 from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
-
+from users.models import User, StudentProfile
 # Serializer for the Week model
 class WeekSerializer(serializers.ModelSerializer):
     class Meta:
@@ -144,11 +145,50 @@ class QuestionResponseDetailSerializer(serializers.ModelSerializer):
 # Serializer for the StudentQuestionnaireResponse model
 class StudentQuestionnaireResponseSerializer(serializers.ModelSerializer):
     response_details = QuestionResponseDetailSerializer(many=True, read_only=True)
+    student_number = serializers.SerializerMethodField()  # Add a custom field
 
     class Meta:
         model = StudentQuestionnaireResponse
-        fields = ['student', 'questionnaire', 'answered_on', 'response_details']
-        read_only_fields = ['answered_on']
+        fields = ['student', 'questionnaire', 'answered_on', 'response_details', 'student_number']
+        read_only_fields = ['answered_on', 'student_number']
+
+    def get_student_number(self, obj):
+        # This method is used to get the student_number for the student_number field
+        return obj.student.student_number
+
+    def to_representation(self, instance):
+        # Override the method to customize the API response
+        representation = super().to_representation(instance)
+        representation['student_number'] = instance.student.student_number
+        return representation
+
+    def create(self, validated_data):
+        student_profile = validated_data.get('student')
+        questionnaire = validated_data.get('questionnaire')
+
+        # Check if a response already exists for this student and questionnaire
+        response, created = StudentQuestionnaireResponse.objects.get_or_create(
+            student=student_profile, 
+            questionnaire=questionnaire,
+            defaults=validated_data
+        )
+
+        # If the response already exists and you want to update it instead
+        if not created:
+            # Update the existing response with any new data
+            for attr, value in validated_data.items():
+                setattr(response, attr, value)
+            response.save()
+
+        return response
+
+
+    def update(self, instance, validated_data):
+        """
+        Update a StudentQuestionnaireResponse instance.
+        """
+        # No change needed here; if 'student' is in validated_data, it already contains the StudentProfile instance
+        return super().update(instance, validated_data)
 
 class DetailedQuestionSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)

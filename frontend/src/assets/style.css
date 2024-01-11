@@ -19,16 +19,27 @@
 }
 
 /* Global Styles */
+html {
+  height: 100%; /* Full height of the viewport */
+  margin: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
-  background-color: var(--primary-green);
-  color: var(--vt-c-black); /* Updated to use variable */
+  background-color: var(--primary-blue); /* Keep your primary blue background */
+  color: var(--vt-c-black);
   line-height: 1.6;
-  font-size: 20px; /* Consolidated font-size */
+  font-size: 20px;
+  margin: 0;
+  padding: 0; /* Reset padding to ensure footer sticks to the bottom */
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; /* Full viewport height */
 }
 
 /* Main Content Styling */
 main {
+  flex-grow: 1;
   padding: 10px 0;
   background-color: var(--primary-blue);
 }
@@ -235,4 +246,16 @@ input[type="submit"]:hover {
 .news-card {
   margin: 10px;
   border-radius: 10px;
+}
+
+/* Graph Container Specific Style */
+.graph-container {
+  background-color: var(--white);
+  padding: 20px;
+  margin: 2rem auto; /* Centers the graph on the page with top and bottom margin */
+  max-width: 600px; /* Set a max-width for the graph container */
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Additional styles to ensure responsiveness across devices */
+  width: 80%; /* You can adjust this percentage based on your design preference */
 }

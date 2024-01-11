@@ -48,6 +48,7 @@
 <script>
 import axios from "axios";
 import ModalComponent from "@/components/ModalComponent.vue";
+
 export default {
   components: {
     ModalComponent,
@@ -57,13 +58,13 @@ export default {
       username: "",
       password: "",
       showModal: true,
-      errorMessage: "", // Mensagem de erro
+      errorMessage: "",
     };
   },
   methods: {
     closeModal() {
       this.showModal = false;
-      this.errorMessage = ""; // Clears the error message when modal is closed
+      this.errorMessage = "";
       document.title = "CTCTLab";
       this.$emit("closeModal");
     },
@@ -77,12 +78,18 @@ export default {
           password: this.password,
         });
 
-        const token = response.data.key;
+        const {
+          key: token,
+          user_type: userType,
+          user_id: userId,
+        } = response.data;
         if (token) {
-          this.$store.dispatch("updateAuthToken", token); // Atualiza o token
+          this.$store.dispatch("updateAuthToken", token);
           this.$store.dispatch("updateCurrentUser", {
-            user: response.data.user_id,
-          }); // Atualiza o utilizador
+            user: userId,
+            userType: userType,
+            username: this.username, // Assuming username is the student number for student users
+          });
           this.$router.push("/");
           this.closeModal();
         } else {

@@ -1,5 +1,11 @@
+<!-- components/ResultsGraph.vue -->
 <template>
   <div>
+    <!-- Graph Container -->
+    <div class="graph-container">
+      <ResultsGraph />
+    </div>
+
     <!-- Loop through questionnaires and create a button for each one -->
     <button
       v-for="questionnaire in questionnaires"
@@ -37,12 +43,14 @@ import apiClient from "@/axiosConfig";
 import QuestionsModal from "@/components/QuestionsModal.vue";
 import QuestionsComponent from "@/components/QuestionsComponent.vue";
 import ResultComponent from "@/components/ResultComponent.vue";
+import ResultsGraph from "@/components/ResultsGraph.vue";
 
 export default {
   components: {
     QuestionsModal,
     QuestionsComponent,
     ResultComponent,
+    ResultsGraph,
   },
   data() {
     return {
@@ -175,37 +183,18 @@ export default {
         return;
       }
 
-      const studentId = this.$store.getters.getCurrentUser.user;
-      console.log(
-        "Current user from Vuex store:",
-        this.$store.getters.getCurrentUser
-      );
-
-      console.log(
-        "Enviando resposta com studentId:",
-        studentId,
-        "e questionnaireId:",
-        this.currentQuestionnaireId
-      );
-
-      if (!studentId) {
+      const studentNumber = this.$store.getters.getStudentNumber;
+      if (!studentNumber) {
         alert(
-          "Não foi possível identificar o utilizador. Por favor, faça login novamente."
+          "Não foi possível identificar o estudante. Por favor, faça login novamente."
         );
         return;
       }
 
-      // Cria a StudentQuestionnaireResponse
       const studentQuestionnaireResponse = {
-        student: studentId,
+        student: studentNumber, // Use student number instead of user ID
         questionnaire: this.currentQuestionnaireId,
       };
-      console.log(
-        "Enviando resposta com studentId:",
-        studentId,
-        "e questionnaireId:",
-        this.currentQuestionnaireId
-      );
 
       let url = `/api/questions/studentresponses/`;
       apiClient
@@ -214,15 +203,11 @@ export default {
           const studentResponseId = response.data.id;
           return Promise.all(
             this.questionResponses.map(({ questionId, selectedOptionId }) => {
-              const questionResponseDetail = {
+              return apiClient.post(`/api/questions/questionresponsedetails/`, {
                 student_response: studentResponseId,
                 question: questionId,
                 selected_option: selectedOptionId,
-              };
-              return apiClient.post(
-                `/api/questions/questionresponsedetails/`,
-                questionResponseDetail
-              );
+              });
             })
           );
         })
@@ -257,6 +242,33 @@ body {
   font-size: 20px;
   font-family: sans-serif;
   padding-top: 20px;
-  background: #e6ecf1;
+  background: var(--light-blue);
+}
+
+.questionnaire-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center; /* Center buttons */
+}
+
+.questionnaire-buttons button {
+  padding: 10px 15px;
+  border: none;
+  background-color: var(--primary-blue); /* Use variable */
+  color: var(--white);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.questionnaire-buttons button:hover {
+  background-color: var(--dark-blue); /* Use variable */
+}
+
+@media (max-width: 768px) {
+  .questionnaire-buttons {
+    flex-direction: column;
+  }
 }
 </style>

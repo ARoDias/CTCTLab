@@ -227,10 +227,8 @@ export default {
       if (this.password1 !== this.password2) {
         this.errorMessage = "As senhas não coincidem.";
         return;
-      } else {
-        this.password = this.password1;
       }
-      const csrfToken = getCookie("csrftoken");
+
       const payload = {
         username: this.username,
         password: this.password1,
@@ -242,39 +240,34 @@ export default {
         gender: this.gender,
         data_consent: this.data_consent,
       };
+
       try {
-        await axios
-          .post("/api/users/register/", payload, {
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrfToken,
-            },
-          })
-          .then((response) => {
-            //if (response.status === 201) {
-            setCookie("user_registered", "true", 1);
-            setCookie("user_type", "student", 1);
-            setCookie("user_id", response.data.user_id, 1);
-            // Atualizar a Vuex store após o registo bem-sucedido
-            this.$store.dispatch("updateAuthToken", response.data.token);
-            this.$store.dispatch("updateCurrentUser", response.data.user);
-            // Redirecionar o utilizador para a página inicial ou apropriada
-            this.$router.push("/");
-            this.closeModal();
+        const response = await axios.post("/api/users/register/", payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+        });
+
+        if (response.status === 200 || response.status === 201) {
+          setCookie("user_registered", "true", 1);
+          setCookie("user_type", "student", 1);
+          setCookie("user_id", response.data.user_id, 1);
+
+          // Assuming the token is sent in the response for successful registration
+          this.$store.dispatch("updateAuthToken", response.data.token);
+          this.$store.dispatch("updateCurrentUser", {
+            user: response.data.user_id,
           });
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.username
-        ) {
-          this.errorMessage = error.response.data.username[0]; // Mostra o erro de "username" vindo do backend
-        } else if (error.response && error.response.data) {
-          this.errorMessage = error.response.data.detail;
-        } else {
-          this.errorMessage = "Houve um problema ao submeter o formulário.";
+
+          this.$router.push("/");
+          this.closeModal();
         }
-        console.error(this.errorMessage, error);
+      } catch (error) {
+        this.errorMessage =
+          error.response?.data?.detail ||
+          "Houve um problema ao submeter o formulário.";
+        console.error("Registration Error:", error);
       }
     },
   },

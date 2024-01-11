@@ -5,53 +5,49 @@ const store = createStore({
   // State of the Vuex store
   state: {
     currentUser: null,
-    studentProfileId: null,
+    userType: null, // New field to store the user type (student or teacher)
+    studentNumber: null, // Store student number only for students
     authToken: localStorage.getItem("userToken") || null,
   },
   // Mutations to change the state
   mutations: {
-    setCurrentUser(state, user) {
-      state.currentUser = user;
+    setCurrentUser(state, userData) {
+      state.currentUser = userData.user;
+      state.userType = userData.userType;
+      state.studentNumber =
+        userData.userType === "student" ? userData.username : null;
     },
-    setStudentProfileId(state, id) {
-      state.studentProfileId = id;
-    },
-    // Set the authToken in the state and localStorage
     setAuthToken(state, token) {
       state.authToken = token;
       localStorage.setItem("userToken", token); // Save token to localStorage
     },
-    // Clear the authToken from the state and localStorage
     clearAuthToken(state) {
       state.authToken = null;
       localStorage.removeItem("userToken"); // Remove token from localStorage
+      state.currentUser = null;
+      state.userType = null;
+      state.studentNumber = null;
     },
   },
   // Actions to commit mutations
   actions: {
-    // Update the currentUser in the state
-    updateCurrentUser({ commit }, user) {
-      commit("setCurrentUser", user);
+    updateCurrentUser({ commit }, userData) {
+      commit("setCurrentUser", userData);
     },
-    updateStudentProfileId({ commit }, id) {
-      commit("setStudentProfileId", id);
-    },
-    // Update the authToken in the state
     updateAuthToken({ commit }, token) {
       commit("setAuthToken", token);
     },
-    // Logout action to clear user and token from the state
     logout({ commit }) {
       commit("clearAuthToken");
-      commit("setCurrentUser", null);
     },
   },
   // Getters to access state values
   getters: {
     getCurrentUser: (state) => state.currentUser,
-    getStudentProfileId: (state) => state.studentProfileId,
+    getUserType: (state) => state.userType, // Getter for user type
+    getStudentNumber: (state) => state.studentNumber, // Getter for student number
     isLoggedIn: (state) => !!state.currentUser,
-    getAuthToken: (state) => state.authToken, // Getter for the token
+    getAuthToken: (state) => state.authToken,
   },
 });
 

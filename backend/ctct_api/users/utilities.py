@@ -14,7 +14,7 @@ from django.conf import settings
 # Project imports
 def send_activation_email_util(user, request):
     token = default_token_generator.make_token(user)
-    print(f"Generated activation token for user ID {user.pk}: {token}")
+    #print(f"Generated activation token for user ID {user.pk}: {token}")
     current_site = get_current_site(request)
     mail_subject = 'Ative a sua conta da unidade curricular de CTCT.'
     message = render_to_string('account_activation_email.html', {
