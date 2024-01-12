@@ -1,3 +1,4 @@
+<!-- components/ResultsGraph.vue -->
 <template>
   <div>
     <!-- Buttons to switch between graphs -->
@@ -11,8 +12,14 @@
     </div>
 
     <!-- Conditionally render the chart components -->
-    <CorrectIncorrectChart v-show="currentGraph === 'correctIncorrect'" />
-    <OptionDistributionChart v-show="currentGraph === 'distribution'" />
+    <CorrectIncorrectChart
+      v-show="currentGraph === 'correctIncorrect'"
+      :question-ids="questionIds"
+    />
+    <OptionDistributionChart
+      v-show="currentGraph === 'distribution'"
+      :question-ids="questionIds"
+    />
   </div>
 </template>
 
@@ -24,6 +31,12 @@ export default {
   components: {
     CorrectIncorrectChart,
     OptionDistributionChart,
+  },
+  props: {
+    questionIds: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {

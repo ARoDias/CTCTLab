@@ -1,6 +1,8 @@
 # backend/ctct_api/questions/views.py
 
 # Import necessary modules and classes
+
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
@@ -13,7 +15,7 @@ from .serializers import (ActivitySerializer, ActivityAttemptSerializer,
                           AnswerSerializer, OptionSerializer, 
                           QuestionnaireQuestionSerializer, 
                           StudentQuestionnaireResponseSerializer, DetailedQuestionnaireSerializer,
-                          QuestionResponseDetailSerializer)
+                          QuestionResponseDetailSerializer, QuestionStatsSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from users.models import StudentGroup
 
@@ -64,6 +66,7 @@ class QuestionnaireViewSet(viewsets.ModelViewSet):
     queryset = Questionnaire.objects.all()
     serializer_class = QuestionnaireSerializer
 
+
 # ViewSet for Answer model providing CRUD operations
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
@@ -83,6 +86,43 @@ class QuestionnaireQuestionViewSet(viewsets.ModelViewSet):
 class StudentQuestionnaireResponseViewSet(viewsets.ModelViewSet):
     queryset = StudentQuestionnaireResponse.objects.all()
     serializer_class = StudentQuestionnaireResponseSerializer
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def create_student_responses(request):
+    serializer = StudentQuestionnaireResponseSerializer(data=request.data)
+    if serializer.is_valid():
+        student_response = serializer.save()
+
+        response_details_data = request.data.get('response_details')
+        for detail_data in response_details_data:
+            detail_data['student_response'] = student_response.id  # Add this line
+            detail_serializer = QuestionResponseDetailSerializer(data=detail_data)
+            if detail_serializer.is_valid():
+                detail_serializer.save()
+            else:
+                print(detail_serializer.errors)  # Debug message
+                transaction.set_rollback(True)
+                return Response(detail_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        print(serializer.errors)  # Debug message
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def question_stats_view(request):
+    question_ids = request.query_params.getlist('question_ids')
+    if not all(q_id.isdigit() for q_id in question_ids):
+        return Response({'error': 'Invalid question IDs'}, status=400)
+
+    response_data = [
+        QuestionStatsSerializer.get_question_stats(int(q_id))
+        for q_id in question_ids if q_id
+    ]
+    return Response(response_data)
 
 # ViewSet for QuestionResponseDetail model providing CRUD operations
 class QuestionResponseDetailViewSet(viewsets.ModelViewSet):

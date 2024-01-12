@@ -1,19 +1,21 @@
-<!-- components/ResultsGraph.vue -->
+<!-- components/TPClassesComponent.vue -->
 <template>
   <div>
-    <!-- Graph Container -->
-    <div class="graph-container">
-      <ResultsGraph />
+    <!-- Questionnaire buttons -->
+    <div class="questionnaire-buttons">
+      <button
+        v-for="questionnaire in availableQuestionnaires"
+        :key="questionnaire.id"
+        @click="fetchQuestions(questionnaire.id)"
+      >
+        {{ questionnaire.title }}
+      </button>
     </div>
 
-    <!-- Loop through questionnaires and create a button for each one -->
-    <button
-      v-for="questionnaire in questionnaires"
-      :key="questionnaire.id"
-      @click="fetchQuestions(questionnaire.id)"
-    >
-      {{ questionnaire.title }}
-    </button>
+    <!-- Graph Container -->
+    <div class="graph-container">
+      <ResultsGraph :question-ids="questionIds" />
+    </div>
 
     <!-- Modal for displaying questions -->
     <QuestionsModal
@@ -65,7 +67,18 @@ export default {
       questionnaires: [], // To store questionnaires for the current activity
       currentQuestionnaireId: null, // To keep track of the current questionnaire ID
       questionResponses: [], // To store user responses
+      answeredQuestionnaires: new Set(),
     };
+  },
+  computed: {
+    availableQuestionnaires() {
+      return this.questionnaires.filter(
+        (q) => !this.answeredQuestionnaires.has(q.id)
+      );
+    },
+    questionIds() {
+      return this.questions.map((question) => question.id);
+    },
   },
   created() {
     this.fetchActivityQuestionnaires();
@@ -115,61 +128,24 @@ export default {
       this.showModal = false;
       this.reset();
     },
-    // Método para enviar a resposta do aluno
+    // Send individual question response
     sendResponse(questionId, selectedOptionId) {
-      // Verifica se o ID do questionário e do aluno estão definidos
-      const studentId = this.$store.getters.getCurrentUser; // Supondo que você tem um getter para o id do perfil do estudante
-      if (!this.currentQuestionnaireId || !studentId) {
-        alert(
-          "Erro ao identificar o questionário ou o estudante. Tenta novamente."
-        );
-        return;
-      }
-      console.log(
-        "Enviando resposta com studentId:",
-        studentId,
-        "e questionnaireId:",
-        this.currentQuestionnaireId
-      );
-
-      // Prepara os dados da resposta do questionário
-      const studentQuestionnaireResponse = {
-        student: studentId, // ID do perfil do estudante, não do usuário
-        questionnaire: this.currentQuestionnaireId,
+      const responseDetail = {
+        question: questionId,
+        selected_option: selectedOptionId,
       };
-
-      // Envia a resposta do questionário
-      apiClient
-        .post("/api/questions/studentresponses/", studentQuestionnaireResponse)
-        .then((response) => {
-          // Agora envia a resposta detalhada para cada pergunta
-          const studentResponseId = response.data.id; // ID da resposta do questionário
-          const questionResponseDetail = {
-            student_response: studentResponseId,
-            question: questionId,
-            selected_option: selectedOptionId,
-          };
-
-          return apiClient.post(
-            "/api/questions/questionresponsedetails/",
-            questionResponseDetail
-          );
-        })
-        .then(() => {
-          console.log("Resposta enviada com sucesso.");
-        })
-        .catch((error) => {
-          console.error("Erro ao enviar resposta:", error.response.data);
-          alert("Erro ao enviar a resposta. Por favor, tente novamente.");
-        });
+      this.questionResponses.push(responseDetail);
     },
 
-    questionAnswered(questionId, selectedOptionId, isCorrect) {
-      // Adiciona a resposta atual ao array de respostas
-      this.questionResponses.push({ questionId, selectedOptionId, isCorrect });
-      // Incrementa o contador de perguntas respondidas
+    // Handle when a question is answered
+    questionAnswered(questionId, selectedOptionId) {
+      this.questionResponses.push({
+        question: questionId,
+        selected_option: selectedOptionId,
+      });
+
       this.questionsAnswered++;
-      // Verifica se todas as perguntas foram respondidas
+
       if (this.questionsAnswered >= this.questions.length) {
         this.showModal = false;
         this.sendAllResponses();
@@ -183,7 +159,8 @@ export default {
         return;
       }
 
-      const studentNumber = this.$store.getters.getStudentNumber;
+      const studentNumber = parseInt(this.$store.getters.getStudentNumber);
+
       if (!studentNumber) {
         alert(
           "Não foi possível identificar o estudante. Por favor, faça login novamente."
@@ -192,25 +169,14 @@ export default {
       }
 
       const studentQuestionnaireResponse = {
-        student: studentNumber, // Use student number instead of user ID
+        student_number: studentNumber,
         questionnaire: this.currentQuestionnaireId,
+        response_details: this.questionResponses,
       };
 
-      let url = `/api/questions/studentresponses/`;
+      let url = "/api/questions/create_student_responses/";
       apiClient
         .post(url, studentQuestionnaireResponse)
-        .then((response) => {
-          const studentResponseId = response.data.id;
-          return Promise.all(
-            this.questionResponses.map(({ questionId, selectedOptionId }) => {
-              return apiClient.post(`/api/questions/questionresponsedetails/`, {
-                student_response: studentResponseId,
-                question: questionId,
-                selected_option: selectedOptionId,
-              });
-            })
-          );
-        })
         .then((responses) => {
           console.log(
             "Todas as respostas foram enviadas com sucesso",
@@ -223,6 +189,9 @@ export default {
             "Ocorreu um erro ao enviar as respostas. Por favor, tente novamente."
           );
         });
+      // Mark the questionnaire as answered
+      this.answeredQuestionnaires.add(this.currentQuestionnaireId);
+      this.reset();
     },
 
     reset() {

@@ -20,5 +20,7 @@ router.register(r'questionresponsedetails', views.QuestionResponseDetailViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('tasks/', views.task_list, name='task-list'),
-     path('activities/<int:activity_id>/questionnaires/', views.get_questionnaires_for_activity, name='activity-questionnaires'),
+    path('activities/<int:activity_id>/questionnaires/', views.get_questionnaires_for_activity, name='activity-questionnaires'),
+    path('create_student_responses/', views.create_student_responses, name='create_student_responses'),
+    path('stats/', views.question_stats_view, name='question-stats'),
 ]

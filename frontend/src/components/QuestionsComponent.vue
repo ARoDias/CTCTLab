@@ -1,14 +1,12 @@
-<!--  components/QuestionComponent.vue -->
+<!-- components/QuestionsComponent.vue -->
 <template>
   <div class="questions-ctr">
-    <!-- Display the current question text -->
     <div class="question">{{ question.question_text }}</div>
     <div class="answers">
-      <!-- Display all options for the current question -->
       <button
         v-for="option in question.options"
         :key="option.id"
-        @click="selectAnswer(option.is_correct)"
+        @click="selectAnswer(question.id, option.id)"
         class="answer"
       >
         {{ option.option_text }}
@@ -19,12 +17,11 @@
 
 <script>
 export default {
-  props: ["question"], // Receives the current question object
-  emits: ["question-answered"], // Emits an event when an answer is selected
+  props: ["question"],
+  emits: ["question-answered"],
   methods: {
-    selectAnswer(isCorrect) {
-      // Emit the event with the correctness of the selected option
-      this.$emit("question-answered", isCorrect);
+    selectAnswer(questionId, selectedOptionId) {
+      this.$emit("question-answered", questionId, selectedOptionId);
     },
   },
 };
