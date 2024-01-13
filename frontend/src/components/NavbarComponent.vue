@@ -92,7 +92,7 @@ export default {
   methods: {
     // Method to log out the user
     logout() {
-      console.log("Logout feito no NavbarComponent");
+      //console.log("Logout feito no NavbarComponent");
       this.$store.dispatch("logout");
       this.$emit("logout");
     },

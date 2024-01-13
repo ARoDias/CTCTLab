@@ -66,17 +66,17 @@ export default {
           })
           .catch((error) => {
             console.error("Error fetching user data:", error);
-            console.log("Logout feito na App catch error");
+            //console.log("Logout feito na App catch error");
             this.$store.dispatch("logout");
             this.$router.push("/login");
           });
       } else {
-        console.log("Logout feito na App else");
+        //console.log("Logout feito na App else");
         this.$store.dispatch("logout");
       }
     },
     logOut() {
-      console.log("Logout feito na App");
+      //console.log("Logout feito na App");
       this.$store.dispatch("logout");
       this.$router.push("/login");
     },
