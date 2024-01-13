@@ -90,7 +90,7 @@ export default {
       apiClient
         .get(url)
         .then((response) => {
-          console.log("Response received:", response.data);
+          //console.log("Response received:", response.data);
           this.questionnaires = response.data;
         })
         .catch((error) => {

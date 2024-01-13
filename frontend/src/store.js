@@ -1,8 +1,22 @@
 import { createStore } from "vuex";
 
+// Função para tentar recuperar um valor do localStorage e parsear de JSON
+function getSavedState(key) {
+  try {
+    const value = localStorage.getItem(key);
+    if (value && value !== "undefined") {
+      return JSON.parse(value);
+    }
+  } catch (error) {
+    console.error(`Erro ao recuperar ${key} do localStorage:`, error);
+    localStorage.removeItem(key);
+  }
+  return null;
+}
+
 const store = createStore({
   state: {
-    currentUser: null,
+    currentUser: getSavedState("currentUser"),
     userType: localStorage.getItem("userType") || null,
     studentNumber: localStorage.getItem("studentNumber") || null,
     authToken: localStorage.getItem("userToken") || null,
@@ -13,7 +27,6 @@ const store = createStore({
       state.userType = userData.userType;
       state.studentNumber =
         userData.userType === "student" ? userData.username : null;
-
       localStorage.setItem("currentUser", JSON.stringify(userData.user));
       localStorage.setItem("userType", userData.userType);
       if (userData.userType === "student") {
@@ -26,7 +39,7 @@ const store = createStore({
       state.authToken = token;
       localStorage.setItem("userToken", token);
     },
-    clearAuthTokens(state) {
+    clearAuthData(state) {
       state.currentUser = null;
       state.userType = null;
       state.studentNumber = null;
@@ -46,7 +59,7 @@ const store = createStore({
       commit("setAuthToken", token);
     },
     logout({ commit }) {
-      commit("clearAuthTokens");
+      commit("clearAuthData");
     },
   },
   getters: {
@@ -58,19 +71,4 @@ const store = createStore({
   },
 });
 
-try {
-  const currentUserData = localStorage.getItem("currentUser");
-  if (currentUserData && currentUserData !== "undefined") {
-    // Verifica se não é "undefined" como string
-    store.state.currentUser = JSON.parse(currentUserData);
-  }
-} catch (error) {
-  console.error(
-    "Erro ao analisar dados de currentUser do localStorage:",
-    error
-  );
-  // Limpar o localStorage ou tomar outra ação apropriada
-  localStorage.removeItem("currentUser");
-  store.dispatch("logout");
-}
 export default store;

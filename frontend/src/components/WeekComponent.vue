@@ -39,7 +39,7 @@ export default {
   },
   created() {
     this.fetchActivities();
-    console.log(this.$route.params.weekNumber);
+    //console.log(this.$route.params.weekNumber);
   },
   watch: {
     "$route.params.weekNumber": "fetchActivities",

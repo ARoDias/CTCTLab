@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
     // Exclude the Authorization header for login requests
     if (config.url !== "/api/users/login/") {
       const token = store.getters.getAuthToken;
-      console.log(token);
+      //console.log(token);
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
