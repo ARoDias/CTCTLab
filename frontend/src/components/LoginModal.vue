@@ -84,6 +84,7 @@ export default {
           user_id: userId,
         } = response.data;
         if (token) {
+          console.log("Dados de Login:", { userId, userType, token });
           this.$store.dispatch("updateAuthToken", token);
           this.$store.dispatch("updateCurrentUser", {
             user: userId,
