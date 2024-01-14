@@ -114,7 +114,11 @@ def create_student_responses(request):
 
 @api_view(['GET'])
 def question_stats_view(request):
-    question_ids = request.query_params.getlist('question_ids')
+    question_ids = request.query_params.get('question_ids')
+    # Divide a string de IDs e remove espaços vazios
+    question_ids = [qid.strip() for qid in question_ids.split(',') if qid.strip()]
+    print("question_stats_view log:", question_ids)
+
     if not all(q_id.isdigit() for q_id in question_ids):
         return Response({'error': 'Invalid question IDs'}, status=400)
 
