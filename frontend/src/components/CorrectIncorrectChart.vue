@@ -32,22 +32,19 @@ export default {
     return {
       barChart: null,
       doughnutCharts: [],
-      doughnutChartData: [], // Initially empty, will be filled with real data
+      doughnutChartData: [],
     };
   },
   async mounted() {
     await this.fetchQuestionStats();
-    this.createDoughnutCharts();
-    this.createBarChart();
+    this.createCharts();
   },
   beforeUnmount() {
-    if (this.barChart) {
-      this.barChart.destroy();
-    }
-    this.doughnutCharts.forEach((chart) => chart && chart.destroy());
+    this.destroyCharts();
   },
   methods: {
     async fetchQuestionStats() {
+      console.log("Question IDs em CorrectIncorrectChart:", this.questionIds);
       try {
         if (this.questionIds.length === 0) {
           throw new Error("No question IDs provided");
@@ -65,7 +62,16 @@ export default {
         console.error("Error fetching question stats:", error);
       }
     },
+    createCharts() {
+      this.createBarChart();
+      this.createDoughnutCharts();
+    },
+
     createBarChart() {
+      if (this.barChart) {
+        console.log("Destroying old bar chart");
+        this.barChart.destroy();
+      }
       const barData = {
         labels: ["Q1", "Q2", "Q3", "Q4", "Q5"],
         datasets: [
@@ -95,10 +101,15 @@ export default {
         data: barData,
         options: barOptions,
       });
+      console.log("Creating bar chart");
     },
     createDoughnutCharts() {
-      // Clear existing charts before creating new ones
-      this.doughnutCharts.forEach((chart) => chart && chart.destroy());
+      this.doughnutCharts.forEach((chart, index) => {
+        if (chart) {
+          console.log(`Destroying old doughnut chart ${index}`);
+          chart.destroy();
+        }
+      });
       this.doughnutCharts = [];
       this.doughnutChartData.forEach((data, index) => {
         this.$nextTick(() => {
@@ -140,12 +151,22 @@ export default {
           });
           this.doughnutCharts.push(chart);
         });
+        console.log("Creating doughnut chart ${index}");
       });
     },
-    updateCharts() {
-      // Method to update both bar and doughnut charts
-      this.createBarChart();
-      this.createDoughnutCharts();
+    destroyCharts() {
+      if (this.barChart) {
+        console.log("Destroying bar chart: ", this.barChart);
+        this.barChart.destroy();
+        this.barChart = null;
+      }
+      this.doughnutCharts.forEach((chart, index) => {
+        if (chart) {
+          console.log(`Destroying doughnut chart ${index}:`, chart);
+          chart.destroy();
+        }
+      });
+      this.doughnutCharts = [];
     },
   },
 };

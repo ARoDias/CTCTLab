@@ -16,6 +16,7 @@
       v-show="currentGraph === 'correctIncorrect'"
       :question-ids="questionIds"
     />
+
     <OptionDistributionChart
       v-show="currentGraph === 'distribution'"
       :question-ids="questionIds"
@@ -37,6 +38,9 @@ export default {
       type: Array,
       required: true,
     },
+  },
+  created() {
+    console.log("Question IDs recebidos em ResultsGraph:", this.questionIds);
   },
   data() {
     return {

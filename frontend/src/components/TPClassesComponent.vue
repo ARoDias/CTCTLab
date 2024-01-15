@@ -13,7 +13,10 @@
     </div>
 
     <!-- Graph Container -->
-    <div class="graph-container">
+    <div
+      class="graph-container"
+      v-if="isQuestionnaireAnswered(currentQuestionnaireId)"
+    >
       <ResultsGraph :question-ids="questionIds" />
     </div>
 
@@ -23,7 +26,7 @@
       @close="closeModal"
       :title="questionnaireTitle"
     >
-      <!-- Slot for modal header -->
+      <!-- Modal header -->
       <template v-slot:header>
         <h3>{{ questionnaireTitle }}</h3>
       </template>
@@ -40,12 +43,13 @@
 </template>
 
 <script>
-// Import the apiClient instance from axiosConfig
+// Importing components and utilities
 import apiClient from "@/axiosConfig";
 import QuestionsModal from "@/components/QuestionsModal.vue";
 import QuestionsComponent from "@/components/QuestionsComponent.vue";
 import ResultComponent from "@/components/ResultComponent.vue";
 import ResultsGraph from "@/components/ResultsGraph.vue";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -61,19 +65,19 @@ export default {
       totalCorrect: 0,
       questions: [],
       questionnaireTitle: "",
-      results: [], // Configuration for results
-      currentActivity: 1, // Example activity ID
-      currentWeek: 3, // Example week number
-      questionnaires: [], // To store questionnaires for the current activity
-      currentQuestionnaireId: null, // To keep track of the current questionnaire ID
-      questionResponses: [], // To store user responses
-      answeredQuestionnaires: new Set(),
+      results: [],
+      currentActivity: 2,
+      currentWeek: 3,
+      questionnaires: [],
+      currentQuestionnaireId: null,
+      questionResponses: [],
     };
   },
   computed: {
+    ...mapGetters(["isQuestionnaireAnswered"]),
     availableQuestionnaires() {
       return this.questionnaires.filter(
-        (q) => !this.answeredQuestionnaires.has(q.id)
+        (q) => !this.isQuestionnaireAnswered(q.id)
       );
     },
     questionIds() {
@@ -81,26 +85,28 @@ export default {
     },
   },
   created() {
-    this.fetchActivityQuestionnaires();
+    this.initializeComponent();
+    this.$store.dispatch("fetchAnsweredQuestionnaires");
   },
   methods: {
+    initializeComponent() {
+      this.fetchActivityQuestionnaires();
+    },
     fetchActivityQuestionnaires() {
       const url = `/api/questions/activities/${this.currentActivity}/questionnaires/?week_number=${this.currentWeek}`;
-      //console.log("Requesting GET to:", url); // Logging for debugging
       apiClient
         .get(url)
         .then((response) => {
-          //console.log("Response received:", response.data);
           this.questionnaires = response.data;
+          console.log(response.data);
         })
         .catch((error) => {
           console.error("Error fetching questionnaires for activity:", error);
         });
     },
-
     fetchQuestions(questionnaireId) {
+      // Fetch questions when a questionnaire is selected
       this.currentQuestionnaireId = questionnaireId;
-      // Retrieve the question IDs for the selected questionnaire
       apiClient
         .get(`/api/questions/questionnaires/${questionnaireId}/`)
         .then((response) => {
@@ -120,82 +126,54 @@ export default {
         })
         .catch((error) => {
           console.error("Error fetching questions", error);
-          alert("Erro ao carregar as perguntas. Tente novamente.");
         });
     },
-
     closeModal() {
       this.showModal = false;
       this.reset();
     },
-    // Send individual question response
-    sendResponse(questionId, selectedOptionId) {
-      const responseDetail = {
-        question: questionId,
-        selected_option: selectedOptionId,
-      };
-      this.questionResponses.push(responseDetail);
-    },
-
-    // Handle when a question is answered
     questionAnswered(questionId, selectedOptionId) {
       this.questionResponses.push({
         question: questionId,
         selected_option: selectedOptionId,
       });
-
       this.questionsAnswered++;
-
       if (this.questionsAnswered >= this.questions.length) {
         this.showModal = false;
         this.sendAllResponses();
       }
     },
-
     sendAllResponses() {
       if (!this.currentQuestionnaireId) {
         console.error("Questionnaire ID not defined.");
-        alert("Erro ao identificar o questionário. Tenta novamente.");
         return;
       }
-
       const studentNumber = parseInt(this.$store.getters.getStudentNumber);
-
       if (!studentNumber) {
-        alert(
-          "Não foi possível identificar o estudante. Por favor, faça login novamente."
-        );
+        alert("Student identification failed. Please log in again.");
         return;
       }
-
       const studentQuestionnaireResponse = {
         student_number: studentNumber,
         questionnaire: this.currentQuestionnaireId,
         response_details: this.questionResponses,
       };
-
       let url = "/api/questions/create_student_responses/";
       apiClient
         .post(url, studentQuestionnaireResponse)
         .then((responses) => {
-          console.log(
-            "Todas as respostas foram enviadas com sucesso",
-            responses
+          console.log("Responses successfully sent", responses);
+          this.$store.dispatch(
+            "markQuestionnaireAsAnswered",
+            this.currentQuestionnaireId
           );
         })
         .catch((error) => {
-          console.error("Erro ao enviar respostas das questões:", error);
-          alert(
-            "Ocorreu um erro ao enviar as respostas. Por favor, tente novamente."
-          );
+          console.error("Error sending question responses:", error);
         });
-      // Mark the questionnaire as answered
-      this.answeredQuestionnaires.add(this.currentQuestionnaireId);
       this.reset();
     },
-
     reset() {
-      // Reset the questionnaire state
       this.questionsAnswered = 0;
       this.totalCorrect = 0;
     },

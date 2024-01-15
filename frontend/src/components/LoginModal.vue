@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiClient from "@/axiosConfig.js";
 import ModalComponent from "@/components/ModalComponent.vue";
 
 export default {
@@ -73,24 +73,27 @@ export default {
     },
     async submitLogin() {
       try {
-        const response = await axios.post("/api/users/login/", {
+        const loginResponse = await apiClient.post("/api/users/login/", {
           username: this.username,
           password: this.password,
         });
 
-        const {
-          key: token,
-          user_type: userType,
-          user_id: userId,
-        } = response.data;
+        const { key: token } = loginResponse.data;
         if (token) {
-          console.log("Dados de Login:", { userId, userType, token });
           this.$store.dispatch("updateAuthToken", token);
-          this.$store.dispatch("updateCurrentUser", {
-            user: userId,
-            userType: userType,
-            username: this.username, // Assuming username is the student number for student users
-          });
+
+          // Assuming user_type 'student' implies is_student: true and is_teacher: false
+          const isStudent = loginResponse.data.user_type === "student";
+          const userData = {
+            id: loginResponse.data.user_id,
+            username: this.username,
+            is_student: isStudent,
+            is_teacher: !isStudent,
+            studentNumber: isStudent ? this.username : null,
+          };
+
+          this.$store.dispatch("updateCurrentUser", userData);
+
           this.$router.push("/");
           this.closeModal();
         } else {

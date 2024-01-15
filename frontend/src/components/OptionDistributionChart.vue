@@ -27,11 +27,18 @@ export default {
   },
   beforeUnmount() {
     if (this.chart) {
+      console.log("Destroying option distribution chart: ", this.chart);
       this.chart.destroy();
     }
   },
   methods: {
     createChart() {
+      // Destroy the old chart if it exists
+      if (this.chart) {
+        console.log("Destroying old option distribution chart: ", this.chart);
+        this.chart.destroy();
+      }
+
       const labels = ["A", "B", "C", "D", "E"];
       const datasets = this.optionDistributionData.map((data, index) => ({
         label: `Q${index + 1} Options`,
@@ -53,6 +60,7 @@ export default {
         data: data,
         options: options,
       });
+      console.log("Creating option distribution chart");
     },
     getRandomColor() {
       return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
