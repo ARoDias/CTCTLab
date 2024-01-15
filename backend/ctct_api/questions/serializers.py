@@ -203,6 +203,22 @@ class QuestionStatsSerializer(serializers.Serializer):
             "incorrect_count": incorrect_count
         }
 
+class OptionDistributionSerializer(serializers.Serializer):
+    option_id = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+    @staticmethod
+    def get_option_distribution(question_id):
+        distribution = []
+        options = Option.objects.filter(question_id=question_id)
+        for option in options:
+            count = QuestionResponseDetail.objects.filter(question=question_id, selected_option=option).count()
+            distribution.append({
+                'option_id': option.id,
+                'count': count
+            })
+        return distribution
+
 class DetailedQuestionSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True)
 
@@ -216,3 +232,4 @@ class DetailedQuestionnaireSerializer(serializers.ModelSerializer):
     class Meta:
         model = Questionnaire
         fields = ['id', 'title', 'description', 'questions']
+

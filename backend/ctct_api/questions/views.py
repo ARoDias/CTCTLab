@@ -15,7 +15,8 @@ from .serializers import (ActivitySerializer, ActivityAttemptSerializer,
                           AnswerSerializer, OptionSerializer, 
                           QuestionnaireQuestionSerializer, 
                           StudentQuestionnaireResponseSerializer, DetailedQuestionnaireSerializer,
-                          QuestionResponseDetailSerializer, QuestionStatsSerializer)
+                          QuestionResponseDetailSerializer, QuestionStatsSerializer,
+                          OptionDistributionSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from users.models import StudentGroup
 
@@ -127,6 +128,22 @@ def question_stats_view(request):
         for q_id in question_ids if q_id
     ]
     return Response(response_data)
+
+@api_view(['GET'])
+def option_distribution_view(request):
+    question_ids = request.query_params.get('question_ids', '').split(',')
+    if not question_ids:
+        return Response({'error': 'No question IDs provided'}, status=400)
+
+    data = []
+    for qid in question_ids:
+        if qid.isdigit():
+            distribution = OptionDistributionSerializer.get_option_distribution(int(qid))
+            data.append({'question_id': int(qid), 'distribution': distribution})
+        else:
+            return Response({'error': 'Invalid question IDs'}, status=400)
+    return Response(data)
+
 
 # ViewSet for QuestionResponseDetail model providing CRUD operations
 class QuestionResponseDetailViewSet(viewsets.ModelViewSet):

@@ -82,17 +82,17 @@ export default {
         if (token) {
           this.$store.dispatch("updateAuthToken", token);
 
-          // Assuming user_type 'student' implies is_student: true and is_teacher: false
-          const isStudent = loginResponse.data.user_type === "student";
           const userData = {
             id: loginResponse.data.user_id,
             username: this.username,
-            is_student: isStudent,
-            is_teacher: !isStudent,
-            studentNumber: isStudent ? this.username : null,
+            is_student: loginResponse.data.user_type === "student",
+            is_teacher: loginResponse.data.user_type !== "student",
+            studentNumber:
+              loginResponse.data.user_type === "student" ? this.username : null,
           };
 
-          this.$store.dispatch("updateCurrentUser", userData);
+          await this.$store.dispatch("updateCurrentUser", userData);
+          await this.$store.dispatch("fetchAndSetUserProfile");
 
           this.$router.push("/");
           this.closeModal();

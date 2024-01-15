@@ -28,8 +28,18 @@ const store = createStore({
       state.currentUser = {
         ...userData,
         studentNumber: userData.is_student ? userData.username : null,
+        studentProfileId: null,
+        teacherProfileId: null,
       };
       localStorage.setItem("currentUser", JSON.stringify(state.currentUser));
+    },
+
+    setStudentProfileId(state, profileId) {
+      state.currentUser = { ...state.currentUser, studentProfileId: profileId };
+    },
+
+    setTeacherProfileId(state, profileId) {
+      state.currentUser = { ...state.currentUser, teacherProfileId: profileId };
     },
     setAuthToken(state, token) {
       //console.log("Mutation: Atualizando authToken:", token);
@@ -62,6 +72,29 @@ const store = createStore({
     },
   },
   actions: {
+    async fetchAndSetUserProfile({ commit, state }) {
+      if (state.currentUser) {
+        try {
+          const response = state.currentUser.is_student
+            ? await apiClient.get("/api/users/students/")
+            : await apiClient.get("/api/users/teachers/");
+
+          const userProfile = response.data.find(
+            (profile) => profile.user.id === state.currentUser.id
+          );
+
+          if (userProfile) {
+            const profileIdKey = state.currentUser.is_student
+              ? "setStudentProfileId"
+              : "setTeacherProfileId";
+            commit(profileIdKey, userProfile.id);
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    },
+
     updateCurrentUser({ commit }, userData) {
       //console.log("Action: updateCurrentUser chamada com:", userData);
       commit("setCurrentUser", userData);
