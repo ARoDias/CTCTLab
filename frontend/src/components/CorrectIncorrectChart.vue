@@ -37,7 +37,6 @@ export default {
   },
   async mounted() {
     await this.fetchQuestionStats();
-    this.createCharts();
   },
   beforeUnmount() {
     this.destroyCharts();
@@ -154,6 +153,11 @@ export default {
         console.log("Creating doughnut chart ${index}");
       });
     },
+    updateCharts() {
+      this.destroyCharts();
+      this.createCharts();
+    },
+
     destroyCharts() {
       if (this.barChart) {
         console.log("Destroying bar chart: ", this.barChart);

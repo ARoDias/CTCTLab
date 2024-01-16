@@ -98,7 +98,7 @@ export default {
         .get(url)
         .then((response) => {
           this.questionnaires = response.data;
-          console.log(response.data);
+          //console.log(response.data);
         })
         .catch((error) => {
           console.error("Error fetching questionnaires for activity:", error);
@@ -119,6 +119,8 @@ export default {
         })
         .then((responses) => {
           this.questions = responses.map((res) => res.data);
+          this.questionIds = this.questions.map((q) => q.id); // Atualizar questionIds aqui
+          console.log("Question IDs:", this.questionIds); // Debug
           this.showModal = true;
           this.questionnaireTitle = this.questionnaires.find(
             (q) => q.id === questionnaireId

@@ -11,7 +11,7 @@ function getSavedState(key) {
   try {
     return JSON.parse(value);
   } catch (error) {
-    //console.error(`Erro ao recuperar ${key} do localStorage:`, error);
+    console.error(`Erro ao recuperar ${key} do localStorage:`, error);
     localStorage.removeItem(key);
     return null;
   }
@@ -27,42 +27,41 @@ const store = createStore({
     setCurrentUser(state, userData) {
       state.currentUser = {
         ...userData,
-        studentNumber: userData.is_student ? userData.username : null,
-        studentProfileId: null,
-        teacherProfileId: null,
+        studentProfileId: getSavedState("studentProfileId"),
+        teacherProfileId: getSavedState("teacherProfileId"),
       };
       localStorage.setItem("currentUser", JSON.stringify(state.currentUser));
     },
-
     setStudentProfileId(state, profileId) {
       state.currentUser = { ...state.currentUser, studentProfileId: profileId };
+      localStorage.setItem("studentProfileId", JSON.stringify(profileId));
     },
-
     setTeacherProfileId(state, profileId) {
       state.currentUser = { ...state.currentUser, teacherProfileId: profileId };
+      localStorage.setItem("teacherProfileId", JSON.stringify(profileId));
     },
     setAuthToken(state, token) {
-      //console.log("Mutation: Atualizando authToken:", token);
       state.authToken = token;
       localStorage.setItem("authToken", JSON.stringify(token));
     },
     clearAuthData(state) {
-      //console.log("Mutation: Limpando dados de autenticação...");
       state.currentUser = null;
-      state.studentNumber = null;
       state.authToken = null;
-
       localStorage.removeItem("currentUser");
-      localStorage.removeItem("studentNumber");
       localStorage.removeItem("authToken");
+      localStorage.removeItem("studentProfileId");
+      localStorage.removeItem("teacherProfileId");
     },
     setAnsweredQuestionnaires(state, questionnaires) {
       state.answeredQuestionnaires = questionnaires;
+      localStorage.setItem(
+        "answeredQuestionnaires",
+        JSON.stringify(questionnaires)
+      );
     },
     addAnsweredQuestionnaire(state, questionnaireId) {
       if (!state.answeredQuestionnaires.includes(questionnaireId)) {
         state.answeredQuestionnaires.push(questionnaireId);
-        // Atualiza o localStorage
         console.log("A guardar questionários respondidos: ", questionnaireId);
         localStorage.setItem(
           "answeredQuestionnaires",
@@ -73,54 +72,55 @@ const store = createStore({
   },
   actions: {
     async fetchAndSetUserProfile({ commit, state }) {
-      if (state.currentUser) {
+      if (state.currentUser.is_student) {
         try {
-          const response = state.currentUser.is_student
-            ? await apiClient.get("/api/users/students/")
-            : await apiClient.get("/api/users/teachers/");
-
+          const response = await apiClient.get("/api/users/students/");
           const userProfile = response.data.find(
             (profile) => profile.user.id === state.currentUser.id
           );
-
           if (userProfile) {
-            const profileIdKey = state.currentUser.is_student
-              ? "setStudentProfileId"
-              : "setTeacherProfileId";
-            commit(profileIdKey, userProfile.id);
+            commit("setStudentProfileId", userProfile.id);
           }
         } catch (error) {
-          console.error("Error fetching user profile:", error);
+          console.error("Error fetching student profile:", error);
+        }
+      } else if (state.currentUser.is_teacher) {
+        try {
+          const response = await apiClient.get("/api/users/teachers/");
+          const userProfile = response.data.find(
+            (profile) => profile.user.id === state.currentUser.id
+          );
+          if (userProfile) {
+            commit("setTeacherProfileId", userProfile.id);
+          }
+        } catch (error) {
+          console.error("Error fetching teacher profile:", error);
         }
       }
     },
-
-    updateCurrentUser({ commit }, userData) {
-      //console.log("Action: updateCurrentUser chamada com:", userData);
+    updateCurrentUser({ commit, dispatch }, userData) {
       commit("setCurrentUser", userData);
+      dispatch("fetchAndSetUserProfile");
     },
     updateAuthToken({ commit }, token) {
-      //console.log("Action: updateAuthToken chamada com:", token);
       commit("setAuthToken", token);
     },
     logout({ commit }) {
-      //console.log("Action: logout chamada.");
       commit("clearAuthData");
     },
     markQuestionnaireAsAnswered({ commit }, questionnaireId) {
       commit("addAnsweredQuestionnaire", questionnaireId);
     },
-    async fetchAnsweredQuestionnaires({ commit, getters }) {
-      if (getters.isLoggedIn) {
+    async fetchAnsweredQuestionnaires({ commit, state }) {
+      if (state.authToken) {
         try {
           const response = await apiClient.get(
             "/api/questions/studentresponses/"
           );
-          const studentId = getters.getCurrentUser.id;
+          const studentId = state.currentUser.studentProfileId;
           const answeredQuestionnaires = response.data
-            .filter((response) => response.student === studentId)
-            .map((response) => response.questionnaire);
-
+            .filter((res) => res.student === studentId)
+            .map((res) => res.questionnaire);
           commit("setAnsweredQuestionnaires", answeredQuestionnaires);
         } catch (error) {
           console.error("Error fetching answered questionnaires:", error);
@@ -133,24 +133,13 @@ const store = createStore({
     isStudent: (state) => state.currentUser?.is_student,
     isTeacher: (state) => state.currentUser?.is_teacher,
     getStudentNumber: (state) => state.currentUser?.studentNumber,
+    getStudentProfileId: (state) => state.currentUser?.studentProfileId,
+    getTeacherProfileId: (state) => state.currentUser?.teacherProfileId,
     isLoggedIn: (state) => !!state.authToken,
     getAuthToken: (state) => state.authToken,
-    isQuestionnaireAnswered: (state) => {
-      console.log("Getting answered questionnaire", state);
-      return (questionnaireId) => {
-        return state.answeredQuestionnaires.includes(questionnaireId);
-      };
-    },
+    isQuestionnaireAnswered: (state) => (questionnaireId) =>
+      state.answeredQuestionnaires.includes(questionnaireId),
   },
 });
-
-// Loading the authToken when the store is created
-const authToken = getSavedState("authToken");
-if (authToken) {
-  //console.log("authToken encontrado durante a inicialização da store:", authToken);
-  store.commit("setAuthToken", authToken);
-} else {
-  console.log("Nenhum authToken encontrado durante a inicialização da store.");
-}
 
 export default store;
