@@ -7,22 +7,24 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
+import apiClient from "@/axiosConfig";
 Chart.register(...registerables);
 
 export default {
+  props: {
+    questionIds: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       chart: null,
-      optionDistributionData: [
-        [50, 75, 150, 100, 25],
-        [30, 120, 90, 60, 100],
-        [80, 60, 40, 220, 100],
-        [65, 85, 110, 45, 195],
-        [45, 135, 65, 155, 100],
-      ],
+      optionDistributionData: [],
     };
   },
-  mounted() {
+  async mounted() {
+    await this.fetchOptionDistribution();
     this.createChart();
   },
   beforeUnmount() {
@@ -32,20 +34,32 @@ export default {
     }
   },
   methods: {
+    async fetchOptionDistribution() {
+      try {
+        const response = await apiClient.get("/api/questions/opt_dist/", {
+          params: { question_ids: this.questionIds.join(",") },
+        });
+        this.optionDistributionData = response.data;
+      } catch (error) {
+        console.error("Error fetching option distribution data:", error);
+      }
+    },
     createChart() {
-      // Destroy the old chart if it exists
       if (this.chart) {
-        console.log("Destroying old option distribution chart: ", this.chart);
+        console.log("Destroying old option distribution chart");
         this.chart.destroy();
       }
 
-      const labels = ["A", "B", "C", "D", "E"];
-      const datasets = this.optionDistributionData.map((data, index) => ({
-        label: `Q${index + 1} Options`,
+      const labels = this.optionDistributionData.map(
+        (data) => `Q${data.question_id}`
+      );
+      const datasets = this.optionDistributionData.map((data) => ({
+        label: `Question ${data.question_id}`,
         backgroundColor: this.getRandomColor(),
-        data,
+        data: data.distribution.map((opt) => opt.count),
       }));
-      const data = { labels, datasets };
+
+      const chartData = { labels, datasets };
       const options = {
         scales: {
           y: {
@@ -55,14 +69,17 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       };
+
       this.chart = new Chart(this.$refs.chart.getContext("2d"), {
         type: "bar",
-        data: data,
+        data: chartData,
         options: options,
       });
       console.log("Creating option distribution chart");
     },
     getRandomColor() {
+      // Esta função gera uma cor aleatória.
+      // Você pode querer ajustar isso para ter um conjunto fixo de cores.
       return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     },
   },
