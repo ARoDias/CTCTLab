@@ -3,6 +3,9 @@
   <div class="chart-container">
     <canvas ref="chart"></canvas>
   </div>
+
+  <!-- Slot for inserting custom content from the parent component -->
+  <slot></slot>
 </template>
 
 <script>
@@ -56,6 +59,9 @@ export default {
         scales: {
           y: {
             beginAtZero: true,
+            ticks: {
+              stepSize: 1, // Ensures only integers are used as step values
+            },
           },
         },
         responsive: true,
@@ -72,11 +78,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.chart-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

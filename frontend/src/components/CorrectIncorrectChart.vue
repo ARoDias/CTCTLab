@@ -6,6 +6,9 @@
       <canvas ref="barChart"></canvas>
     </div>
 
+    <!-- Slot for inserting custom content from the parent component -->
+    <slot></slot>
+
     <!-- Doughnut Chart Rows -->
     <div class="doughnut-chart-row">
       <div
@@ -18,7 +21,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
@@ -82,11 +84,15 @@ export default {
         scales: {
           y: {
             beginAtZero: true,
+            ticks: {
+              stepSize: 1, // Ensures only integers are used as step values
+            },
           },
         },
         responsive: true,
         maintainAspectRatio: false,
       };
+
       this.barChart = new Chart(this.$refs.barChart.getContext("2d"), {
         type: "bar",
         data: barData,

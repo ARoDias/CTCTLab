@@ -10,30 +10,58 @@
         Distribuição das Respostas pelos Alunos
       </button>
     </div>
-    <!-- Question Details -->
-    <div class="question-details">
-      <div
-        v-for="(question, index) in questionDetails"
-        :key="question.id"
-        class="question-info"
-      >
-        <h3>Q{{ index + 1 }} - {{ question.questionText }}</h3>
-        <p>Opção correta: {{ getCorrectOptionText(question) }}</p>
-      </div>
+
+    <!-- CorrectIncorrectChart Component with slotted question details -->
+    <div v-show="currentGraph === 'correctIncorrect'">
+      <CorrectIncorrectChart :doughnutChartData="doughnutChartData">
+        <!-- Slotted content for question details -->
+        <div class="question-details" v-if="questionDetails.length">
+          <div
+            v-for="(question, index) in questionDetails"
+            :key="question.id"
+            class="question-info"
+          >
+            <h3>Q{{ index + 1 }} - {{ question.questionText }}</h3>
+            <p>Opção correta: {{ getCorrectOptionText(question) }}</p>
+          </div>
+        </div>
+      </CorrectIncorrectChart>
     </div>
 
-    <!-- Conditionally render the chart components -->
-    <CorrectIncorrectChart
-      v-show="currentGraph === 'correctIncorrect'"
-      :doughnutChartData="doughnutChartData"
-      :questionDetails="questionDetails"
-    />
-
-    <OptionDistributionChart
-      v-show="currentGraph === 'distribution'"
-      :optionDistributionData="optionDistributionData"
-      :questionDetails="questionDetails"
-    />
+    <!-- OptionDistributionChart Component with slotted question details and options -->
+    <div v-show="currentGraph === 'distribution'">
+      <OptionDistributionChart :optionDistributionData="optionDistributionData">
+        <!-- Slotted content for question details with colors -->
+        <template v-slot:default>
+          <div
+            class="question-details"
+            v-if="questionDetails.length && optionDistributionData.length"
+          >
+            <div
+              v-for="(question, qIndex) in questionDetails"
+              :key="question.id"
+              class="question-info"
+            >
+              <h3 :style="getStyle(qIndex)">
+                Q{{ qIndex + 1 }} - {{ question.questionText }}
+              </h3>
+              <ul>
+                <li v-for="(option, oIndex) in question.options" :key="oIndex">
+                  <span
+                    :style="{
+                      fontWeight: 'bold',
+                      color: getStyle(qIndex).color,
+                    }"
+                    >Opção {{ oIndex + 1 }} -</span
+                  >
+                  {{ option.optionText }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </template>
+      </OptionDistributionChart>
+    </div>
   </div>
 </template>
 
@@ -64,6 +92,19 @@ export default {
     await this.fetchData();
   },
   methods: {
+    getStyle(qIndex) {
+      if (
+        this.optionDistributionData &&
+        this.optionDistributionData.length > qIndex
+      ) {
+        return {
+          color:
+            this.optionDistributionData[qIndex].backgroundColor + " !important",
+          "font-weight": "bold",
+        };
+      }
+      return {}; // Default style if data is not available
+    },
     getCorrectOptionText(question) {
       const correctOption = question.options.find((option) => option.isCorrect);
       return correctOption ? correctOption.optionText : "Unknown";
