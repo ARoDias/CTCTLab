@@ -7,56 +7,48 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import apiClient from "@/axiosConfig";
+
 Chart.register(...registerables);
 
 export default {
   props: {
-    questionIds: {
-      type: Array,
-      required: true,
-    },
+    optionDistributionData: Array,
+    questionDetails: Array,
   },
   data() {
     return {
       chart: null,
-      optionDistributionData: [],
     };
   },
-  async mounted() {
-    await this.fetchOptionDistribution();
-    this.createChart();
+  mounted() {
+    this.createOrUpdateChart();
   },
-  beforeUnmount() {
-    if (this.chart) {
-      console.log("Destroying option distribution chart: ", this.chart);
-      this.chart.destroy();
-    }
+  watch: {
+    optionDistributionData() {
+      this.createOrUpdateChart();
+    },
   },
   methods: {
-    async fetchOptionDistribution() {
-      try {
-        const response = await apiClient.get("/api/questions/opt_dist/", {
-          params: { question_ids: this.questionIds.join(",") },
-        });
-        this.optionDistributionData = response.data;
-      } catch (error) {
-        console.error("Error fetching option distribution data:", error);
+    createOrUpdateChart() {
+      if (this.chart) {
+        // Destroy the old chart if it exists
+        this.chart.destroy();
       }
+      this.createChart();
     },
     createChart() {
-      if (this.chart) {
-        console.log("Destroying old option distribution chart");
-        this.chart.destroy();
+      if (!this.optionDistributionData || !this.optionDistributionData.length) {
+        console.log("No data for chart");
+        return;
       }
 
       const labels = this.optionDistributionData.map(
-        (data) => `Q${data.question_id}`
+        (data) => `Opção ${data.question_id}`
       );
       const datasets = this.optionDistributionData.map((data) => ({
-        label: `Question ${data.question_id}`,
-        backgroundColor: this.getRandomColor(),
-        data: data.distribution.map((opt) => opt.count),
+        label: `Q${data.question_id}`,
+        backgroundColor: data.backgroundColor,
+        data: data.distribution,
       }));
 
       const chartData = { labels, datasets };
@@ -75,12 +67,7 @@ export default {
         data: chartData,
         options: options,
       });
-      console.log("Creating option distribution chart");
-    },
-    getRandomColor() {
-      // Esta função gera uma cor aleatória.
-      // Você pode querer ajustar isso para ter um conjunto fixo de cores.
-      return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      console.log("Option distribution chart created");
     },
   },
 };

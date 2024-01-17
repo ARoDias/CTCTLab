@@ -5,6 +5,7 @@
     <div class="bar-chart-container">
       <canvas ref="barChart"></canvas>
     </div>
+
     <!-- Doughnut Chart Rows -->
     <div class="doughnut-chart-row">
       <div
@@ -12,7 +13,6 @@
         :key="index"
         class="doughnut-chart-container"
       >
-        <!-- Add title above each doughnut chart -->
         <canvas :ref="'doughnutChart' + index"></canvas>
       </div>
     </div>
@@ -21,51 +21,43 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
-import apiClient from "@/axiosConfig";
 Chart.register(...registerables);
 
 export default {
   props: {
-    questionIds: Array, // Receive question IDs as a prop from the parent component
+    doughnutChartData: Array,
+    questionDetails: Array,
   },
   data() {
     return {
       barChart: null,
       doughnutCharts: [],
-      doughnutChartData: [],
     };
   },
-  async mounted() {
-    await this.fetchQuestionStats();
+  mounted() {
+    if (this.doughnutChartData && this.doughnutChartData.length) {
+      this.createCharts();
+    }
   },
   beforeUnmount() {
     this.destroyCharts();
   },
-  methods: {
-    async fetchQuestionStats() {
-      console.log("Question IDs em CorrectIncorrectChart:", this.questionIds);
-      try {
-        if (this.questionIds.length === 0) {
-          throw new Error("No question IDs provided");
-        }
-        const response = await apiClient.get("/api/questions/stats/", {
-          params: { question_ids: this.questionIds.join(",") }, // Ensure this is sent correctly
-        });
-        this.doughnutChartData = response.data.map((q) => ({
-          title: `Question ${q.question_id}`,
-          correct: q.correct_count,
-          incorrect: q.incorrect_count,
-        }));
-        this.updateCharts(); // Call a method to update the charts with new data
-      } catch (error) {
-        console.error("Error fetching question stats:", error);
+  watch: {
+    doughnutChartData(newData) {
+      if (newData && newData.length) {
+        this.updateCharts();
       }
     },
+  },
+  methods: {
     createCharts() {
       this.createBarChart();
       this.createDoughnutCharts();
     },
-
+    updateCharts() {
+      this.destroyCharts();
+      this.createCharts();
+    },
     createBarChart() {
       if (this.barChart) {
         console.log("Destroying old bar chart");
@@ -75,12 +67,12 @@ export default {
         labels: ["Q1", "Q2", "Q3", "Q4", "Q5"],
         datasets: [
           {
-            label: "Correct Answers",
+            label: "Respostas Certas",
             backgroundColor: "green",
             data: this.doughnutChartData.map((d) => d.correct),
           },
           {
-            label: "Incorrect Answers",
+            label: "Respostas Erradas",
             backgroundColor: "red",
             data: this.doughnutChartData.map((d) => d.incorrect),
           },
@@ -123,7 +115,7 @@ export default {
           const chart = new Chart(context, {
             type: "doughnut",
             data: {
-              labels: ["Correct", "Incorrect"],
+              labels: ["Correcta", "Incorrecta"],
               datasets: [
                 {
                   data: [data.correct, data.incorrect],
@@ -153,10 +145,6 @@ export default {
         console.log("Creating doughnut chart ${index}");
       });
     },
-    updateCharts() {
-      this.destroyCharts();
-      this.createCharts();
-    },
 
     destroyCharts() {
       if (this.barChart) {
@@ -175,56 +163,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-* {
-  box-sizing: border-box;
-}
-
-body,
-html {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-.chart-container,
-.doughnut-chart-container {
-  /* Shared styles for chart containers */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin: 0 auto; /* Center the charts and prevent horizontal overflow */
-  max-width: 100%; /* Ensure the container does not exceed the width of the viewport */
-}
-
-.bar-chart-container {
-  /* Specific styles for the bar chart container */
-  flex: 1 0 100%; /* Take full width on larger screens */
-  max-width: 90%; /* Limit the maximum width to avoid being too wide */
-  margin-bottom: 20px; /* Space below the bar chart */
-}
-
-.doughnut-chart-container {
-  /* Specific styles for doughnut chart containers */
-  flex: 1 0 45%; /* Take up to 45% of the container width */
-}
-
-.doughnut-chart-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-@media (max-width: 768px) {
-  .doughnut-chart-container {
-    flex-basis: 100%; /* Each doughnut chart takes full width on medium screens */
-  }
-}
-
-@media (max-width: 480px) {
-  .doughnut-chart-container {
-    flex-basis: 100%; /* Each doughnut chart takes full width on small screens */
-  }
-}
-</style>

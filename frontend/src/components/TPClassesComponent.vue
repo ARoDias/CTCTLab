@@ -17,7 +17,7 @@
       class="graph-container"
       v-if="isQuestionnaireAnswered(currentQuestionnaireId)"
     >
-      <ResultsGraph :question-ids="questionIds" />
+      <ResultsGraph :question-details="questionDetails" />
     </div>
 
     <!-- Modal for displaying questions -->
@@ -71,6 +71,7 @@ export default {
       questionnaires: [],
       currentQuestionnaireId: null,
       questionResponses: [],
+      questionDetails: [],
     };
   },
   computed: {
@@ -105,7 +106,6 @@ export default {
         });
     },
     fetchQuestions(questionnaireId) {
-      // Fetch questions when a questionnaire is selected
       this.currentQuestionnaireId = questionnaireId;
       apiClient
         .get(`/api/questions/questionnaires/${questionnaireId}/`)
@@ -119,8 +119,15 @@ export default {
         })
         .then((responses) => {
           this.questions = responses.map((res) => res.data);
-          this.questionIds = this.questions.map((q) => q.id); // Atualizar questionIds aqui
-          console.log("Question IDs:", this.questionIds); // Debug
+          this.questionDetails = this.questions.map((q) => ({
+            id: q.id,
+            questionText: q.question_text,
+            options: q.options.map((opt) => ({
+              id: opt.id,
+              optionText: opt.option_text,
+              isCorrect: opt.is_correct,
+            })),
+          }));
           this.showModal = true;
           this.questionnaireTitle = this.questionnaires.find(
             (q) => q.id === questionnaireId
