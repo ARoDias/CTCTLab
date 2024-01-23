@@ -29,6 +29,10 @@ export default {
   props: {
     doughnutChartData: Array,
     questionDetails: Array,
+    shouldRenderChart: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -37,7 +41,13 @@ export default {
     };
   },
   mounted() {
-    if (this.doughnutChartData && this.doughnutChartData.length) {
+    console.log("CorrectIncorrectChart component mounted");
+    if (
+      this.shouldRenderChart &&
+      this.doughnutChartData &&
+      this.doughnutChartData.length &&
+      this.shouldRenderChart
+    ) {
       this.createCharts();
     }
   },
@@ -48,6 +58,13 @@ export default {
     doughnutChartData(newData) {
       if (newData && newData.length) {
         this.updateCharts();
+      }
+    },
+    shouldRenderChart(newVal) {
+      if (newVal) {
+        this.createCharts();
+      } else {
+        this.destroyCharts();
       }
     },
   },
@@ -61,10 +78,12 @@ export default {
       this.createCharts();
     },
     createBarChart() {
+      console.log("Creating bar chart...");
       if (this.barChart) {
         console.log("Destroying old bar chart");
         this.barChart.destroy();
       }
+
       const barData = {
         labels: ["Q1", "Q2", "Q3", "Q4", "Q5"],
         datasets: [
@@ -90,6 +109,7 @@ export default {
           },
         },
         responsive: true,
+        animation: false,
         maintainAspectRatio: false,
       };
 
@@ -98,9 +118,10 @@ export default {
         data: barData,
         options: barOptions,
       });
-      console.log("Creating bar chart");
+      console.log("Bar chart created:", this.barChart);
     },
     createDoughnutCharts() {
+      console.log("Creating doughnut chart...");
       this.doughnutCharts.forEach((chart, index) => {
         if (chart) {
           console.log(`Destroying old doughnut chart ${index}`);
@@ -130,6 +151,7 @@ export default {
               ],
             },
             options: {
+              animation: false,
               responsive: true,
               maintainAspectRatio: false,
               legend: {
@@ -148,8 +170,8 @@ export default {
           });
           this.doughnutCharts.push(chart);
         });
-        console.log("Creating doughnut chart ${index}");
       });
+      console.log("Last Doughnut chart created:", this.doughnutCharts);
     },
 
     destroyCharts() {

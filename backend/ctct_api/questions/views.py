@@ -132,6 +132,7 @@ def question_stats_view(request):
 @api_view(['GET'])
 def option_distribution_view(request):
     question_ids = request.query_params.get('question_ids', '').split(',')
+    print("option_distribution_view log: ", question_ids);
     if not question_ids:
         return Response({'error': 'No question IDs provided'}, status=400)
 
@@ -142,8 +143,22 @@ def option_distribution_view(request):
             data.append({'question_id': int(qid), 'distribution': distribution})
         else:
             return Response({'error': 'Invalid question IDs'}, status=400)
+        
     return Response(data)
 
+@api_view(['GET'])
+def last_answered_questionnaire_view(request):
+    """
+    API view to retrieve the last answered questionnaire from all responses.
+    """
+    try:
+        # Fetch the latest StudentQuestionnaireResponse from the database
+        last_response = StudentQuestionnaireResponse.objects.latest('answered_on')
+        serializer = StudentQuestionnaireResponseSerializer(last_response)
+        return Response(serializer.data)
+    except StudentQuestionnaireResponse.DoesNotExist:
+        # Handle the case where there are no responses
+        return Response({'message': 'No questionnaires have been answered yet.'}, status=404)
 
 # ViewSet for QuestionResponseDetail model providing CRUD operations
 class QuestionResponseDetailViewSet(viewsets.ModelViewSet):

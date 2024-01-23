@@ -12,8 +12,9 @@ const RegisterModal = () => import("./components/RegisterModal.vue");
 const NotFound = () => import("./components/NotFound.vue");
 const WeekComponent = () => import("./components/WeekComponent.vue");
 const TPClassesComponent = () => import("./components/TPClassesComponent.vue");
+const TeacherDashboard = () => import("./components/TeacherDashboard.vue");
 const QuestionsComponent = () => import("./components/QuestionsComponent.vue");
-const ResultComponent = () => import("./components/ResultComponent.vue");
+//const ResultComponent = () => import("./components/ResultComponent.vue");
 // Define routes
 const routes = [
   // Home page accessible only if authenticated
@@ -35,11 +36,16 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/quizzDashboard",
+    component: TeacherDashboard,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/questions",
     component: QuestionsComponent,
     meta: { requiresAuth: true },
   },
-  { path: "/result", component: ResultComponent, meta: { requiresAuth: true } },
+
   // Handle undefined routes
   { path: "/:catchAll(.*)", component: NotFound },
 ];

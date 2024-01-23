@@ -20,25 +20,32 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Navigation links -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <!-- Dynamically display week links if user is authenticated -->
-          <template v-if="userAuthenticated">
-            <li class="nav-item" v-for="week in weeks" :key="week.id">
-              <router-link :to="week.url" class="nav-link fs-6">{{
-                week.name
-              }}</router-link>
-            </li>
-            <!-- New link for TP Classes page (to be created) -->
-            <li class="nav-item">
-              <router-link to="/tp-classes" class="nav-link fs-6"
-                >Aulas TP</router-link
-              >
-            </li>
-          </template>
-        </ul>
-      </div>
+      <!-- Commenting out the week links as they will not be implemented yet -->
+      <!--
+      <template v-if="userAuthenticated && isStudent">
+        <li class="nav-item" v-for="week in weeks" :key="week.id">
+          <router-link :to="week.url" class="nav-link fs-6">{{ week.name }}</router-link>
+        </li>
+      </template>
+      -->
+
+      <!-- Link for TP Classes page if user is a student -->
+      <template v-if="userAuthenticated && isStudent">
+        <li class="nav-item">
+          <router-link to="/tp-classes" class="nav-link fs-6"
+            >Aulas TP</router-link
+          >
+        </li>
+      </template>
+
+      <!-- Link for Teacher Dashboard if user is a teacher -->
+      <template v-if="userAuthenticated && isTeacher">
+        <li class="nav-item">
+          <router-link to="/quizzDashboard" class="nav-link fs-6"
+            >Teacher Dashboard</router-link
+          >
+        </li>
+      </template>
 
       <!-- Authentication related links -->
       <div>
@@ -84,9 +91,17 @@ export default {
     };
   },
   computed: {
-    // Computed property to check if the user is authenticated
+    // Check if the user is authenticated
     userAuthenticated() {
       return this.$store.getters.isLoggedIn;
+    },
+    // Check if the logged-in user is a student
+    isStudent() {
+      return this.$store.getters.isStudent;
+    },
+    // Check if the logged-in user is a teacher
+    isTeacher() {
+      return this.$store.getters.isTeacher;
     },
   },
   methods: {

@@ -2,16 +2,16 @@ import { createStore } from "vuex";
 import apiClient from "@/axiosConfig.js";
 
 function getSavedState(key) {
-  console.log(`Recuperando ${key} do localStorage...`);
+  //console.log(`Recuperando ${key} do localStorage...`);
   const value = localStorage.getItem(key);
   if (value === null || value === "undefined") {
-    console.log(`${key} não encontrado ou inválido no localStorage.`);
+    //console.log(`${key} não encontrado ou inválido no localStorage.`);
     return null;
   }
   try {
     return JSON.parse(value);
   } catch (error) {
-    console.error(`Erro ao recuperar ${key} do localStorage:`, error);
+    //console.error(`Erro ao recuperar ${key} do localStorage:`, error);
     localStorage.removeItem(key);
     return null;
   }

@@ -37,7 +37,7 @@
         :question="questions[questionsAnswered]"
         @question-answered="questionAnswered"
       />
-      <ResultComponent v-else :result="results[totalCorrect]" />
+      <!-- <ResultComponent v-else :result="results[totalCorrect]" /> -->
     </QuestionsModal>
   </div>
 </template>
@@ -47,7 +47,7 @@
 import apiClient from "@/axiosConfig";
 import QuestionsModal from "@/components/QuestionsModal.vue";
 import QuestionsComponent from "@/components/QuestionsComponent.vue";
-import ResultComponent from "@/components/ResultComponent.vue";
+//import ResultComponent from "@/components/ResultComponent.vue";
 import ResultsGraph from "@/components/ResultsGraph.vue";
 import { mapGetters } from "vuex";
 
@@ -55,7 +55,7 @@ export default {
   components: {
     QuestionsModal,
     QuestionsComponent,
-    ResultComponent,
+    //ResultComponent,
     ResultsGraph,
   },
   data() {
@@ -66,7 +66,7 @@ export default {
       questions: [],
       questionnaireTitle: "",
       results: [],
-      currentActivity: 2,
+      currentActivity: 4,
       currentWeek: 3,
       questionnaires: [],
       currentQuestionnaireId: null,

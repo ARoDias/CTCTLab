@@ -17,6 +17,10 @@ export default {
   props: {
     optionDistributionData: Array,
     questionDetails: Array,
+    shouldRenderChart: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -24,11 +28,21 @@ export default {
     };
   },
   mounted() {
-    this.createOrUpdateChart();
+    console.log("OptionDistributionChart component mounted");
+    if (this.shouldRenderChart) {
+      this.createOrUpdateChart();
+    }
   },
   watch: {
     optionDistributionData() {
       this.createOrUpdateChart();
+    },
+    shouldRenderChart(newVal) {
+      if (newVal) {
+        this.createCharts();
+      } else {
+        this.destroyCharts();
+      }
     },
   },
   methods: {
@@ -40,6 +54,7 @@ export default {
       this.createChart();
     },
     createChart() {
+      console.log("Creating bar chart...");
       if (!this.optionDistributionData || !this.optionDistributionData.length) {
         console.log("No data for chart");
         return;
@@ -65,6 +80,7 @@ export default {
           },
         },
         responsive: true,
+        animation: false,
         maintainAspectRatio: false,
       };
 
@@ -73,7 +89,7 @@ export default {
         data: chartData,
         options: options,
       });
-      console.log("Option distribution chart created");
+      console.log("Option distribution chart created: ", this.chart);
     },
   },
 };
