@@ -3,13 +3,14 @@
 
 # Import necessary modules and models
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-from .models import (Activity, Week, ActivityParticipation, ActivityAttempt,
-                     FileSubmission, DownloadableContent, QuestionnaireQuestion,
-                     Question, Option, Questionnaire, Answer, 
-                     QuestionResponseDetail, StudentQuestionnaireResponse)
-from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
-from users.models import User, StudentProfile
+#from django.shortcuts import get_object_or_404
+from .models import (Activity, Week, #ActivityParticipation, ActivityAttempt, 
+                     # FileSubmission, DownloadableContent, 
+                     QuestionnaireQuestion,
+                     Question, Option, Questionnaire, #Answer, 
+                     QuestionResponseDetail, StudentQuestionnaireResponse, ActivityInstance)
+#from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
+from users.models import StudentProfile
 # Serializer for the Week model
 class WeekSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,43 +19,64 @@ class WeekSerializer(serializers.ModelSerializer):
 
 # Serializer for the Activity model with nested data
 class ActivitySerializer(serializers.ModelSerializer):
-    # Using slug fields for readable representations of related objects
-    classroom = serializers.SlugRelatedField(slug_field="name", read_only=True)
-    teacher = TeacherProfileSerializer(read_only=True)
-    week = serializers.SlugRelatedField(slug_field="theme", read_only=True)
+    # Assuming new fields in the Activity model
+    # Update with actual field names and logic as per new model structure
 
     class Meta:
         model = Activity
         fields = '__all__'
 
-# Serializer for the ActivityAttempt model
-class ActivityAttemptSerializer(serializers.ModelSerializer):
+class ActivityInstanceSerializer(serializers.ModelSerializer):
+    # Assuming fields for ActivityInstance model. Update as per your model's fields.
+    activity = serializers.PrimaryKeyRelatedField(read_only=True)
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+    is_active = serializers.BooleanField()
+
     class Meta:
-        model = ActivityAttempt
-        fields = ['id', 'student', 'activity', 'start_time', 'end_time', 'score']
+        model = ActivityInstance
+        fields = ['id', 'activity', 'start_time', 'end_time', 'is_active']
+
+# Serializer for the ActivityAttempt model
+# class ActivityAttemptSerializer(serializers.ModelSerializer):
+#     activity_instance = serializers.PrimaryKeyRelatedField(
+#         queryset=ActivityInstance.objects.all(),
+#         source='activity_instance'
+#     )
+#
+#     class Meta:
+#         model = ActivityAttempt
+#         fields = ['id', 'student', 'activity_instance', 'start_time', 'end_time', 'score']
+
 
 # Serializer for the ActivityParticipation model
-class ActivityParticipationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ActivityParticipation
-        fields = ['id', 'student', 'activity', 'response']
+# class ActivityParticipationSerializer(serializers.ModelSerializer):
+#     activity_instance = serializers.PrimaryKeyRelatedField(
+#         queryset=ActivityInstance.objects.all(),
+#         source='activity_instance'
+#     )
+#
+#     class Meta:
+#         model = ActivityParticipation
+#         fields = ['id', 'student', 'activity_instance', 'response']
 
 # Serializer for the FileSubmission model with nested activity and student data
-class FileSubmissionSerializer(serializers.ModelSerializer):
-    activity = ActivitySerializer(read_only=True)
-    student = StudentProfileSerializer(read_only=True)
+# class FileSubmissionSerializer(serializers.ModelSerializer):
+#     activity_instance = ActivityInstanceSerializer(read_only=True)
+#     student = StudentProfileSerializer(read_only=True)
+#
+#     class Meta:
+#         model = FileSubmission
+#         fields = ['id', 'activity_instance', 'student', 'submitted_file', 'timestamp']
 
-    class Meta:
-        model = FileSubmission
-        fields = ['id', 'activity', 'student', 'submitted_file', 'timestamp']
 
 # Serializer for the DownloadableContent model with nested week data
-class DownloadableContentSerializer(serializers.ModelSerializer):
+""" class DownloadableContentSerializer(serializers.ModelSerializer):
     week = serializers.SlugRelatedField(slug_field="theme", read_only=True)
 
     class Meta:
         model = DownloadableContent
-        fields = ['id', 'title', 'week', 'file', 'uploaded_at']
+        fields = ['id', 'title', 'week', 'file', 'uploaded_at'] """
 
 # Serializer for the Option model
 class OptionSerializer(serializers.ModelSerializer):
@@ -90,7 +112,7 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
         return obj.questions.values_list('id', flat=True)
 
 # Serializer for the Answer model
-class AnswerSerializer(serializers.ModelSerializer):
+""" class AnswerSerializer(serializers.ModelSerializer):
     is_correct = serializers.ReadOnlyField()  # Ensure this field is read-only
 
     class Meta:
@@ -111,7 +133,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             instance.selected_option = selected_option
             instance.is_correct = selected_option.is_correct
         instance.save()
-        return instance
+        return instance """
 
 # Serializer for the QuestionnaireQuestion model
 class QuestionnaireQuestionSerializer(serializers.ModelSerializer):

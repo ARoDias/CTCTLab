@@ -14,18 +14,25 @@ class Week(models.Model):
     def __str__(self):
         return f"Week {self.number}: {self.theme}"
 
+# Updated Activity model
 class Activity(models.Model):
-    # Title of the activity, indexed for efficient searching
     title = models.CharField(max_length=255, db_index=True)
     description = models.TextField(null=True, blank=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    classroom = models.ForeignKey('users.Classroom', on_delete=models.CASCADE)
     week = models.ForeignKey(Week, on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+# ActivityInstance model
+class ActivityInstance(models.Model):
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    classroom = models.ForeignKey('users.Classroom', on_delete=models.CASCADE)
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.activity.title} in {self.classroom.name}"
 
 class Questionnaire(models.Model):
     # Title of the questionnaire, indexed for efficient searching
@@ -77,7 +84,7 @@ class QuestionnaireQuestion(models.Model):
     def __str__(self):
         return f"Question {self.order} in {self.questionnaire.title}"
 
-class Answer(models.Model):
+""" class Answer(models.Model):
     # Stores a student's answer to a question
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE)
@@ -85,9 +92,9 @@ class Answer(models.Model):
 
     def __str__(self):
         selected_option_text = self.selected_option.option_text if self.selected_option else "No answer selected"
-        return f"Answer by {self.student.user.get_full_name()} for {self.question.question_text}: {selected_option_text}"
+        return f"Answer by {self.student.user.get_full_name()} for {self.question.question_text}: {selected_option_text}" """
 
-class ActivityAttempt(models.Model):
+""" class ActivityAttempt(models.Model):
     # Tracks an attempt by a student to complete an activity
     student = models.ForeignKey('users.StudentProfile', on_delete=models.CASCADE, verbose_name=("Student"))
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, verbose_name=("Activity"))
@@ -134,7 +141,7 @@ class DownloadableContent(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Conteúdo: {self.title} (Semana {self.week.number})"
+        return f"Conteúdo: {self.title} (Semana {self.week.number})" """
 
 class StudentQuestionnaireResponse(models.Model):
     """

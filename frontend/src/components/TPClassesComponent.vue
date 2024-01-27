@@ -13,11 +13,13 @@
     </div>
 
     <!-- Graph Container -->
+    <!-- v-if="isQuestionnaireAnswered(currentQuestionnaireId)" -->
     <div
       class="graph-container"
       v-if="isQuestionnaireAnswered(currentQuestionnaireId)"
     >
-      <ResultsGraph :question-details="questionDetails" />
+      <h3>Obrigado pelas respostas!</h3>
+      <ResultsGraph v-if="false" :question-details="questionDetails" />
     </div>
 
     <!-- Modal for displaying questions -->
@@ -66,7 +68,7 @@ export default {
       questions: [],
       questionnaireTitle: "",
       results: [],
-      currentActivity: 4,
+      currentActivity: 6,
       currentWeek: 3,
       questionnaires: [],
       currentQuestionnaireId: null,

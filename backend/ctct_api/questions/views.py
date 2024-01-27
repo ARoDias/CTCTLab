@@ -6,19 +6,18 @@ from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
-from .models import (Option, QuestionnaireQuestion, Activity, Week, FileSubmission, 
-                     Question, Questionnaire, Answer, ActivityAttempt, 
-                     StudentQuestionnaireResponse, QuestionResponseDetail)
-from .serializers import (ActivitySerializer, ActivityAttemptSerializer, 
-                          WeekSerializer, FileSubmissionSerializer, 
-                          QuestionSerializer, QuestionnaireSerializer, 
-                          AnswerSerializer, OptionSerializer, 
+from .models import (Option, QuestionnaireQuestion, Activity, Week, # FileSubmission, 
+                     Question, Questionnaire, # Answer, ActivityAttempt, 
+                     StudentQuestionnaireResponse, QuestionResponseDetail, ActivityInstance)
+from .serializers import (ActivitySerializer, # ActivityAttemptSerializer, 
+                          WeekSerializer, # FileSubmissionSerializer, AnswerSerializer
+                          QuestionSerializer, QuestionnaireSerializer, OptionSerializer, 
                           QuestionnaireQuestionSerializer, 
                           StudentQuestionnaireResponseSerializer, DetailedQuestionnaireSerializer,
                           QuestionResponseDetailSerializer, QuestionStatsSerializer,
-                          OptionDistributionSerializer)
+                          OptionDistributionSerializer, ActivityInstanceSerializer)
 from rest_framework.decorators import api_view, permission_classes
-from users.models import StudentGroup
+#from users.models import StudentGroup
 
 # ViewSet for Activity model providing CRUD operations
 class ActivityViewSet(viewsets.ModelViewSet):
@@ -26,22 +25,22 @@ class ActivityViewSet(viewsets.ModelViewSet):
     serializer_class = ActivitySerializer
 
 # ViewSet for ActivityAttempt model providing CRUD operations
-class ActivityAttemptViewSet(viewsets.ModelViewSet):
+""" class ActivityAttemptViewSet(viewsets.ModelViewSet):
     queryset = ActivityAttempt.objects.all()
     serializer_class = ActivityAttemptSerializer
-
+ """
 # ViewSet for Week model providing CRUD operations
 class WeekViewSet(viewsets.ModelViewSet):
     queryset = Week.objects.all()
     serializer_class = WeekSerializer
 
 # ViewSet for FileSubmission model providing CRUD operations
-class FileSubmissionViewSet(viewsets.ModelViewSet):
+""" class FileSubmissionViewSet(viewsets.ModelViewSet):
     queryset = FileSubmission.objects.all()
-    serializer_class = FileSubmissionSerializer
+    serializer_class = FileSubmissionSerializer """
 
 # Custom view to return a list of activities related to the authenticated user
-@api_view(['GET'])
+""" @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def task_list(request):
     if hasattr(request.user, 'studentprofile'):
@@ -55,7 +54,11 @@ def task_list(request):
     else:
         activities = Activity.objects.none()
     serializer = ActivitySerializer(activities, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data) """
+
+class ActivityInstanceViewSet(viewsets.ModelViewSet):
+    queryset = ActivityInstance.objects.all()
+    serializer_class = ActivityInstanceSerializer
 
 # ViewSet for Question model providing CRUD operations
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -69,9 +72,9 @@ class QuestionnaireViewSet(viewsets.ModelViewSet):
 
 
 # ViewSet for Answer model providing CRUD operations
-class AnswerViewSet(viewsets.ModelViewSet):
+""" class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer
+    serializer_class = AnswerSerializer """
 
 # ViewSet for Option model providing CRUD operations
 class OptionViewSet(viewsets.ModelViewSet):
