@@ -18,10 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Debug mode should be False in Production
-DEBUG = bool(os.getenv("DEBUG", False))
-
-# Limit the allowed hosts in Production
-ALLOWED_HOSTS = ['ctctlab.helioho.st','127.0.0.1','192.168.1.18','localhost','14d6-2a01-14-8020-7e20-39f4-f953-cf9e-ef2f.ngrok-free.app']
+DEBUG = bool(os.getenv("DEBUG", True))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -156,6 +153,8 @@ SIMPLE_JWT = {
 }
 
 ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.18', 'localhost']
+#ALLOWED_HOSTS = ['ctctlab.helioho.st','127.0.0.1','192.168.1.18','localhost','1308-193-136-124-214.ngrok-free.app']
+#ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
