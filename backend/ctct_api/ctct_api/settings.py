@@ -82,6 +82,8 @@ DATABASES = {
         },      
     }
 }
+
+# database on HelioHost:
 """ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -152,14 +154,24 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.18', 'localhost']
+ALLOWED_HOSTS = ['167.71.56.116','127.0.0.1', '192.168.1.18', 'localhost', 'throbbing-river-82258.pktriot.net','c99b-2a01-14-8020-7e20-4149-3c30-a6b3-baa8.ngrok-free.app']
 #ALLOWED_HOSTS = ['ctctlab.helioho.st','127.0.0.1','192.168.1.18','localhost','1308-193-136-124-214.ngrok-free.app']
-#ALLOWED_HOSTS = ['*']
 
-CORS_ALLOWED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = ['https://throbbing-river-82258.pktriot.net', 'https://c99b-2a01-14-8020-7e20-4149-3c30-a6b3-baa8.ngrok-free.app']
+
+""" CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "http://localhost:8081",  
+    "http://localhost:8081",
+    "https://c99b-2a01-14-8020-7e20-4149-3c30-a6b3-baa8.ngrok-free.app",
+] """
+
+CORS_ALLOWED_ORIGINS = [
+    "https://c99b-2a01-14-8020-7e20-4149-3c30-a6b3-baa8.ngrok-free.app",
+    "http://localhost:8080",
+    "https://throbbing-river-82258.pktriot.net",
 ]
+
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,22 +1,22 @@
 // frontend/src/main.js
 
 // Import necessary modules
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import axios from 'axios';
-import store from './store';  // Import Vuex store
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './axiosConfig';
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import axios from "axios";
+import store from "./store"; // Import Vuex store
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./axiosConfig";
 
 // Set the baseURL for axios
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+axios.defaults.baseURL = "https://throbbing-river-82258.pktriot.net";
 
 // Create the Vue app
 const app = createApp(App);
 
 // Use Vuex store
-app.use(store);  
+app.use(store);
 
 // Use Vue Router
 app.use(router);
@@ -25,4 +25,4 @@ app.use(router);
 app.config.globalProperties.$axios = axios;
 
 // Mount the app
-app.mount('#app');
+app.mount("#app");

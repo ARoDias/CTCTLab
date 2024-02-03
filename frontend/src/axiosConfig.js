@@ -6,7 +6,7 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: "https://throbbing-river-82258.pktriot.net/",
   headers: {
     "Content-Type": "application/json",
   },

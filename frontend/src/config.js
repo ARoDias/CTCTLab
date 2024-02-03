@@ -1,4 +1,4 @@
 // config.js
-const backendURL = 'http://127.0.0.1:8000'; // Adjust the URL as needed
+const backendURL = "https://throbbing-river-82258.pktriot.net"; // Adjust the URL as needed
 
 export default backendURL;
