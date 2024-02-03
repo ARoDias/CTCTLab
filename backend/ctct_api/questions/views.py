@@ -1,7 +1,6 @@
 # backend/ctct_api/questions/views.py
 
 # Import necessary modules and classes
-
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -121,7 +120,7 @@ def question_stats_view(request):
     question_ids = request.query_params.get('question_ids')
     # Divide a string de IDs e remove espaços vazios
     question_ids = [qid.strip() for qid in question_ids.split(',') if qid.strip()]
-    print("question_stats_view log:", question_ids)
+    #print("question_stats_view log:", question_ids)
 
     if not all(q_id.isdigit() for q_id in question_ids):
         return Response({'error': 'Invalid question IDs'}, status=400)
@@ -135,7 +134,7 @@ def question_stats_view(request):
 @api_view(['GET'])
 def option_distribution_view(request):
     question_ids = request.query_params.get('question_ids', '').split(',')
-    print("option_distribution_view log: ", question_ids);
+    #print("option_distribution_view log: ", question_ids);
     if not question_ids:
         return Response({'error': 'No question IDs provided'}, status=400)
 

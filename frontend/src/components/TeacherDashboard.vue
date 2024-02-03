@@ -97,11 +97,11 @@ export default {
   methods: {
     async fetchLastAnsweredQuestionnaire() {
       try {
-        console.log("Fetching last answered questionnaire...");
+        //console.log("Fetching last answered questionnaire...");
         const response = await apiClient.get(
           "/api/questions/last_answered_questionnaire/"
         );
-        console.log("Last answered questionnaire data:", response.data);
+        //console.log("Last answered questionnaire data:", response.data);
         const lastAnsweredQuestionnaire = response.data;
         if (lastAnsweredQuestionnaire) {
           await this.fetchQuestions(lastAnsweredQuestionnaire.questionnaire);
@@ -115,13 +115,11 @@ export default {
 
     async fetchQuestions(questionnaireId) {
       try {
-        console.log(
-          `Fetching questions for questionnaire ID: ${questionnaireId}`
-        );
+        //console.log(`Fetching questions for questionnaire ID: ${questionnaireId}`);
         const response = await apiClient.get(
           `/api/questions/questionnaires/${questionnaireId}/`
         );
-        console.log("Questions response:", response.data);
+        //console.log("Questions response:", response.data);
         const questionIds = response.data.questions;
 
         const questionsResponses = await Promise.all(

@@ -28,7 +28,7 @@ export default {
     };
   },
   mounted() {
-    console.log("OptionDistributionChart component mounted");
+    //console.log("OptionDistributionChart component mounted");
     if (this.shouldRenderChart) {
       this.createOrUpdateChart();
     }
@@ -54,7 +54,7 @@ export default {
       this.createChart();
     },
     createChart() {
-      console.log("Creating bar chart...");
+      //console.log("Creating bar chart...");
       if (!this.optionDistributionData || !this.optionDistributionData.length) {
         console.log("No data for chart");
         return;
@@ -89,7 +89,7 @@ export default {
         data: chartData,
         options: options,
       });
-      console.log("Option distribution chart created: ", this.chart);
+      //console.log("Option distribution chart created: ", this.chart);
     },
   },
 };

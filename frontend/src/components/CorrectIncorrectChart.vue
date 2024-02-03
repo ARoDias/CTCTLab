@@ -41,7 +41,7 @@ export default {
     };
   },
   mounted() {
-    console.log("CorrectIncorrectChart component mounted");
+    //"CorrectIncorrectChart component mounted");
     if (
       this.shouldRenderChart &&
       this.doughnutChartData &&
@@ -78,9 +78,9 @@ export default {
       this.createCharts();
     },
     createBarChart() {
-      console.log("Creating bar chart...");
+      //console.log("Creating bar chart...");
       if (this.barChart) {
-        console.log("Destroying old bar chart");
+        //console.log("Destroying old bar chart");
         this.barChart.destroy();
       }
 
@@ -118,13 +118,13 @@ export default {
         data: barData,
         options: barOptions,
       });
-      console.log("Bar chart created:", this.barChart);
+      //console.log("Bar chart created:", this.barChart);
     },
     createDoughnutCharts() {
-      console.log("Creating doughnut chart...");
-      this.doughnutCharts.forEach((chart, index) => {
+      //console.log("Creating doughnut chart...");
+      this.doughnutCharts.forEach((chart) => {
         if (chart) {
-          console.log(`Destroying old doughnut chart ${index}`);
+          //console.log(`Destroying old doughnut chart ${index}`);
           chart.destroy();
         }
       });
@@ -171,18 +171,18 @@ export default {
           this.doughnutCharts.push(chart);
         });
       });
-      console.log("Last Doughnut chart created:", this.doughnutCharts);
+      //console.log("Last Doughnut chart created:", this.doughnutCharts);
     },
 
     destroyCharts() {
       if (this.barChart) {
-        console.log("Destroying bar chart: ", this.barChart);
+        //console.log("Destroying bar chart: ", this.barChart);
         this.barChart.destroy();
         this.barChart = null;
       }
-      this.doughnutCharts.forEach((chart, index) => {
+      this.doughnutCharts.forEach((chart) => {
         if (chart) {
-          console.log(`Destroying doughnut chart ${index}:`, chart);
+          //console.log(`Destroying doughnut chart ${index}:`, chart);
           chart.destroy();
         }
       });
