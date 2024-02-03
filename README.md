@@ -88,7 +88,7 @@ The CTCTLab project's Django backend is configured with an emphasis on security,
 - **Cross-Origin Resource Sharing (CORS)**:
   - Configured to allow requests from specific origins, particularly the VueJS frontend running on localhost (ports 8080 and 8081).
 
-This configuration ensures that the Django backend is robust, secure, and ready to integrate with the VueJS frontend&#8203;`【oaicite:0】`&#8203;.
+This configuration ensures that the Django backend is robust, secure, and ready to integrate with the VueJS frontend.
 
 ### Models
 
@@ -222,7 +222,7 @@ The CTCTLab project uses a range of Django models to represent different entitie
      - `selected_option`: ForeignKey linking to the Option model.
      - `is_correct`: BooleanField set based on the selected option's correctness.
 
-These models form the backbone of the CTCTLab's data structure, supporting its functionalities and representing the core aspects of the application, from user management to the dynamic creation and handling of educational content&#8203;`【oaicite:3】`&#8203;&#8203;`【oaicite:2】`&#8203;&#8203;`【oaicite:1】`&#8203;&#8203;`【oaicite:0】`&#8203;.
+These models form the backbone of the CTCTLab's data structure, supporting its functionalities and representing the core aspects of the application, from user management to the dynamic creation and handling of educational content.
 
 Documentation of Django models, detailing each model's fields, relationships, and purpose.
 
@@ -238,7 +238,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `username`: Username of the user.
      - `email`: Email address of the user.
      - `is_student`: Boolean to identify if the user is a student.
-     - `is_teacher`: Boolean to identify if the user is a teacher【80†source】.
+     - `is_teacher`: Boolean to identify if the user is a teacher.
 
 2. **StudentProfileSerializer**:
 
@@ -251,7 +251,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `age`: Age of the student.
      - `gender`: Gender of the student.
      - `data_consent`: Boolean for data usage consent.
-     - `tp_classroom`: SlugRelatedField to the Classroom model【81†source】.
+     - `tp_classroom`: SlugRelatedField to the Classroom model.
 
 3. **TeacherProfileSerializer**:
 
@@ -259,14 +259,14 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
    - **Fields**:
      - `id`: AutoField, primary key.
      - `user`: Nested UserSerializer.
-     - `classrooms`: ManyToManyField with Classroom model, represented with slug names【82†source】.
+     - `classrooms`: ManyToManyField with Classroom model, represented with slug names.
 
 4. **CourseSerializer**:
 
    - **Purpose**: Used for serializing the Course model.
    - **Fields**:
      - `id`: AutoField, primary key.
-     - `name`: Name of the course【83†source】.
+     - `name`: Name of the course.
 
 5. **StudentGroupSerializer**:
 
@@ -275,14 +275,14 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `id`: AutoField, primary key.
      - `students`: ManyToManyField with StudentProfile model, represented with nested serializers.
      - `classroom`: ForeignKey to the Classroom model.
-     - `week`: ForeignKey to the Week model【84†source】.
+     - `week`: ForeignKey to the Week model.
 
 6. **CustomLoginSerializer**:
 
    - **Purpose**: Custom serializer for handling login requests.
    - **Fields**:
      - `username`: Username of the user.
-     - `password`: Password of the user, represented with password style input【85†source】.
+     - `password`: Password of the user, represented with password style input.
 
 7. **UserAndProfileRegistrationSerializer**:
 
@@ -290,7 +290,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
    - **Fields**:
      - User model related fields: `username`, `password`, `email`, `first_name`, `last_name`.
      - StudentProfile model related fields: `course`, `age`, `gender`, `data_consent`.
-   - **Create Method**: Validates data, creates User instance, and links it with a StudentProfile instance【86†source】.
+   - **Create Method**: Validates data, creates User instance, and links it with a StudentProfile instance.
 
 8. **ClassroomSerializer**:
    - **Purpose**: Serializes Classroom model.
@@ -299,7 +299,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `name`: Name of the classroom.
      - `capacity`: Capacity of the classroom.
      - `class_type`: Type of class (TP or P).
-     - `class_type_display`: Human-readable representation of class_type【87†source】.
+     - `class_type_display`: Human-readable representation of class_type.
 
 ### Serializers
 
@@ -313,7 +313,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `username`: Username of the user.
      - `email`: Email address of the user.
      - `is_student`: Boolean to identify if the user is a student.
-     - `is_teacher`: Boolean to identify if the user is a teacher【80†source】.
+     - `is_teacher`: Boolean to identify if the user is a teacher.
 
 2. **StudentProfileSerializer**:
 
@@ -326,7 +326,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `age`: Age of the student.
      - `gender`: Gender of the student.
      - `data_consent`: Boolean for data usage consent.
-     - `tp_classroom`: SlugRelatedField to the Classroom model【81†source】.
+     - `tp_classroom`: SlugRelatedField to the Classroom model.
 
 3. **TeacherProfileSerializer**:
 
@@ -334,14 +334,14 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
    - **Fields**:
      - `id`: AutoField, primary key.
      - `user`: Nested UserSerializer.
-     - `classrooms`: ManyToManyField with Classroom model, represented with slug names【82†source】.
+     - `classrooms`: ManyToManyField with Classroom model, represented with slug names.
 
 4. **CourseSerializer**:
 
    - **Purpose**: Used for serializing the Course model.
    - **Fields**:
      - `id`: AutoField, primary key.
-     - `name`: Name of the course【83†source】.
+     - `name`: Name of the course.
 
 5. **StudentGroupSerializer**:
 
@@ -350,14 +350,14 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `id`: AutoField, primary key.
      - `students`: ManyToManyField with StudentProfile model, represented with nested serializers.
      - `classroom`: ForeignKey to the Classroom model.
-     - `week`: ForeignKey to the Week model【84†source】.
+     - `week`: ForeignKey to the Week model.
 
 6. **CustomLoginSerializer**:
 
    - **Purpose**: Custom serializer for handling login requests.
    - **Fields**:
      - `username`: Username of the user.
-     - `password`: Password of the user, represented with password style input【85†source】.
+     - `password`: Password of the user, represented with password style input.
 
 7. **UserAndProfileRegistrationSerializer**:
 
@@ -365,7 +365,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
    - **Fields**:
      - User model related fields: `username`, `password`, `email`, `first_name`, `last_name`.
      - StudentProfile model related fields: `course`, `age`, `gender`, `data_consent`.
-   - **Create Method**: Validates data, creates User instance, and links it with a StudentProfile instance【86†source】.
+   - **Create Method**: Validates data, creates User instance, and links it with a StudentProfile instance.
 
 8. **ClassroomSerializer**:
    - **Purpose**: Serializes Classroom model.
@@ -374,7 +374,7 @@ Serializers in the CTCTLab project play a crucial role in converting complex dat
      - `name`: Name of the classroom.
      - `capacity`: Capacity of the classroom.
      - `class_type`: Type of class (TP or P).
-     - `class_type_display`: Human-readable representation of class_type【87†source】.
+     - `class_type_display`: Human-readable representation of class_type.
 
 ### URLs Configuration
 
@@ -390,7 +390,7 @@ The URLs in CTCTLab are configured to route requests to appropriate views. Here'
   - Includes URLs from the `users` application.
 - **Questions Application**:
   - Route: `api/questions/`
-  - Includes URLs from the `questions` application&#8203;`【oaicite:3】`&#8203;.
+  - Includes URLs from the `questions` application.
 
 #### Questions Application URLs (questions/urls.py)
 
@@ -400,7 +400,7 @@ The URLs in CTCTLab are configured to route requests to appropriate views. Here'
   - `create_student_responses/`: Endpoint for creating student responses.
   - `stats/`: Endpoint for question statistics.
   - `opt_dist/`: Endpoint for option distribution.
-  - `last_answered_questionnaire/`: Retrieves the last answered questionnaire&#8203;`【oaicite:2】`&#8203;.
+  - `last_answered_questionnaire/`: Retrieves the last answered questionnaire.
 
 #### Users Application URLs (users/urls.py)
 
@@ -411,7 +411,7 @@ The URLs in CTCTLab are configured to route requests to appropriate views. Here'
   - `currentUser/`: Retrieves the current user's information.
   - `token/`: Endpoint for obtaining JWT tokens.
   - `token/refresh/`: Endpoint for refreshing JWT tokens.
-  - `activate/<uidb64>/<token>/`: Endpoint for account activation&#8203;`【oaicite:1】`&#8203;.
+  - `activate/<uidb64>/<token>/`: Endpoint for account activation.
 
 ### Authentication and Permissions
 
@@ -424,7 +424,7 @@ CTCTLab uses JSON Web Tokens (JWT) for authentication, ensuring secure access to
 - **JWT Configuration**:
   - **Algorithm**: HS256.
   - **Signing Key**: Derived from the project's `SECRET_KEY`.
-  - **Token Lifespan**: Access tokens have a lifetime of 120 minutes, while refresh tokens last for 1 day&#8203;`【oaicite:0】`&#8203;.
+  - **Token Lifespan**: Access tokens have a lifetime of 120 minutes, while refresh tokens last for 1 day.
 
 ### API Endpoints
 
@@ -462,42 +462,125 @@ Additional custom endpoints are also available for specific actions like creatin
 
 ## Frontend - VueJS
 
+The CTCTLab's frontend is built using VueJS, offering a dynamic and interactive user interface. This section outlines the setup, key components, state management via Vuex, routing with Vue Router, Axios configuration for API requests, styling guidelines, and deployment instructions.
+
 ### Project Setup
 
-Guide on setting up the VueJS environment, including necessary dependencies.
+To set up the VueJS environment for the CTCTLab project, follow these steps:
+
+1. **Install Node.js**: Ensure Node.js is installed on your machine. VueJS requires Node.js to run the development server and build the project.
+2. **Install Vue CLI**: Use npm or yarn to install Vue CLI globally on your machine. Vue CLI is a powerful tool that facilitates the creation, development, and management of VueJS projects.
+   > npm install -g @vue/cli  
+   > yarn global add @vue/cli
+3. **Create a Vue Project**: If starting from scratch, use Vue CLI to create a new project. For existing projects, skip to the next step.
+   > vue create ctctlab-frontend
+4. **Install Dependencies**: Navigate to the project directory and install the required dependencies.
+   > cd ctctlab-frontend  
+   > npm install
 
 ### Components
 
-Documentation for each Vue component, explaining its functionality and props.
+The CTCTLab frontend utilizes several Vue components for different parts of the application. Here's an overview of some key components and their functionalities:
+
+- **HomePage.vue**: Serves as the landing page for the application.
+- **LoginModal.vue**: A modal component for user login.
+- **RegisterModal.vue**: Handles user registration.
+- **NavbarComponent.vue**: Provides navigation across the application.
+- **WeekComponent.vue**: Displays weekly content and activities.
+- **QuestionsComponent.vue**: Manages the creation and display of questionnaires.
+
+Each component is designed to be reusable and modular, facilitating ease of maintenance and development.
 
 ### Vuex Store
 
-Detail the state management, including the structure of the store, state, mutations, actions, and getters.
+CTCTLab leverages Vuex for state management. The `store.js` file configures the Vuex store, defining the state, mutations, actions, and getters necessary for managing the application's state:
+
+- **State**: Contains the application's state variables such as `currentUser`, `authToken`, and `answeredQuestionnaires`. The `currentUser` includes dynamically loaded profile IDs (`studentProfileId`, `teacherProfileId`) from local storage to maintain user state across sessions.
+
+  ```javascript
+  state: {
+    currentUser: getSavedState("currentUser"),
+    authToken: getSavedState("authToken"),
+    answeredQuestionnaires: getSavedState("answeredQuestionnaires") || [],
+  },
+  ```
+
+- **Mutations**: Functions to mutate the application's state directly. This includes setting the current user, updating profile IDs, managing the auth token, and handling answered questionnaires. Mutations ensure that state changes are trackable and predictable.
+
+  ```javascript
+  mutations: {
+    setCurrentUser(state, userData) {...},
+    setStudentProfileId(state, profileId) {...},
+    setTeacherProfileId(state, profileId) {...},
+    setAuthToken(state, token) {...},
+    clearAuthData(state) {...},
+    setAnsweredQuestionnaires(state, questionnaires) {...},
+    addAnsweredQuestionnaire(state, questionnaireId) {...},
+  },
+  ```
+
+- **Actions**: Asynchronous operations that commit mutations to the state. Actions include fetching user profiles based on the current user's role (student/teacher), updating the current user, handling login/logout processes, marking questionnaires as answered, and fetching answered questionnaires.
+
+  ```javascript
+  actions: {
+    async fetchAndSetUserProfile({ commit, state }) {...},
+    updateCurrentUser({ commit, dispatch }, userData) {...},
+    updateAuthToken({ commit }, token) {...},
+    logout({ commit }) {...},
+    markQuestionnaireAsAnswered({ commit }, questionnaireId) {...},
+    async fetchAnsweredQuestionnaires({ commit, state }) {...},
+  },
+  ```
+
+- **Getters**: Compute derived state based on the store's state, allowing for easy access and manipulation of the state within components. Getters include methods to get the current user, check if a user is a student or teacher, access user profile IDs, and determine if a user is logged in or if a questionnaire has been answered.
+
+  ```javascript
+  getters: {
+    getCurrentUser: (state) => state.currentUser,
+    isStudent: (state) => state.currentUser?.is_student,
+    isTeacher: (state) => state.currentUser?.is_teacher,
+    getStudentNumber: (state) => state.currentUser?.studentNumber,
+    getStudentProfileId: (state) => state.currentUser?.studentProfileId,
+    getTeacherProfileId: (state) => state.currentUser?.teacherProfileId,
+    isLoggedIn: (state) => !!state.authToken,
+    getAuthToken: (state) => state.authToken,
+    isQuestionnaireAnswered: (state) => (questionnaireId) => state.answeredQuestionnaires.includes(questionnaireId),
+  },
+  ```
+
+This Vuex store setup allows the CTCTLab application to maintain a centralized and reactive state, ensuring that components can reactively and efficiently display data and respond to user interactions.
 
 ### Router Configuration
 
-Explain the Vue Router setup, routes configuration, and navigation guards.
+Vue Router is utilized for navigating between pages within the application. The `router.js` file outlines the routes and their corresponding components, along with navigation guards to handle authentication and redirect logic:
+
+- **Routes**: Defines the path and component mappings for the application.
+- **Navigation Guards**: Utilizes `beforeEach` to check for authentication before accessing certain routes.
 
 ### Axios Configuration
 
-Describe the Axios instance configuration, including base URL, headers, and interceptors.
+The `axiosConfig.js` file configures Axios for API requests, setting up base URLs, headers, and interceptors for request and response handling:
+
+- **Base URL**: Specifies the API's base URL.
+- **Headers**: Sets common headers for all requests, such as `Content-Type`.
+- **Interceptors**: Adds request interceptors to include authentication tokens, and response interceptors to handle errors globally.
 
 ### Styling and Layout
 
-Information on how styling is handled, including any CSS frameworks or pre-processors used.
+CTCTLab uses Bootstrap for styling and layout, ensuring a responsive and user-friendly interface. Custom CSS can be added to individual components for specific styling needs.
 
-## Testing
+### Testing
 
-Describe the testing approach, frameworks, and how to run tests.
+Testing is conducted using Vue Test Utils and Jest. Tests for components ensure functionality is as expected and document how components are supposed to be used.
 
-## Deployment
+### Deployment
 
-Instructions for deploying the application, both backend and frontend.
+Deployment instructions would include building the VueJS project for production and deploying it to a web server or a service like Netlify or Vercel.
 
-## Contributing
+### Contributing
 
-Guidelines for contributing to the project, including code style, branching strategy, and pull request process.
+Guidelines for contributing to the CTCTLab project, including code style, branching strategy, and pull request process.
 
-## License
+### License
 
 State the project's license and terms of use.

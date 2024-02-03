@@ -62,7 +62,7 @@ const store = createStore({
     addAnsweredQuestionnaire(state, questionnaireId) {
       if (!state.answeredQuestionnaires.includes(questionnaireId)) {
         state.answeredQuestionnaires.push(questionnaireId);
-        console.log("A guardar questionários respondidos: ", questionnaireId);
+        //console.log("A guardar questionários respondidos: ", questionnaireId);
         localStorage.setItem(
           "answeredQuestionnaires",
           JSON.stringify(state.answeredQuestionnaires)

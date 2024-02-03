@@ -167,9 +167,8 @@
 </template>
 
 <script>
-// Importações necessárias e a lógica do componente permanecem as mesmas
-import axios from "axios";
-import { getCookie, setCookie } from "./utilities.js";
+import apiClient from "@/axiosConfig";
+//import { getCookie, setCookie } from "./utilities.js";
 import PrivacyPolicy from "./PrivacyPolicy.vue";
 import ModalComponent from "@/components/ModalComponent.vue"; // Certifique-se de que o caminho está correto
 
@@ -215,17 +214,24 @@ export default {
     },
     async fetchCourses() {
       try {
-        const response = await axios.get("/api/users/courses/");
+        // Using apiClient instead of axios directly for API requests
+        const response = await apiClient.get("api/users/courses/");
         this.courses = response.data;
       } catch (error) {
-        console.error("Erro ao buscar cursos:", error);
+        console.error("Error fetching courses:", error);
+        this.errorMessage = "Erro a carregar cursos. Tente mais tarde.";
       }
     },
 
     async submitRegister() {
       this.errorMessage = null;
       if (this.password1 !== this.password2) {
-        this.errorMessage = "As senhas não coincidem.";
+        this.errorMessage = "As passwords não são iguais.";
+        return;
+      }
+      if (!/^\d+$/.test(this.username)) {
+        this.errorMessage =
+          "Registo apenas para alunos: username deverá ser o número de aluno.";
         return;
       }
 
@@ -242,35 +248,27 @@ export default {
       };
 
       try {
-        const response = await axios.post("/api/users/register/", payload, {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-        });
+        // Use apiClient instead of axios directly
+        const response = await apiClient.post("api/users/register/", payload);
 
-        if (response.status === 200 || response.status === 201) {
-          setCookie("user_registered", "true", 1);
-          setCookie("user_type", "student", 1);
-          setCookie("user_id", response.data.user_id, 1);
-
-          // Assuming the token is sent in the response for successful registration
-          this.$store.dispatch("updateAuthToken", response.data.token);
-          this.$store.dispatch("updateCurrentUser", {
-            user: response.data.user_id,
-          });
-
-          this.$router.push("/");
-          this.closeModal();
+        // Assuming the backend sends back a success response
+        if (response.status === 201) {
+          // Handle success, for example, showing a success message
+          // and/or redirecting the user
+          console.log("Registration successful", response.data);
+          // Reset form or redirect user here
+          this.closeModal(); // Assuming you have a method to close the modal
         }
       } catch (error) {
+        // If an error occurs, handle it, for example by setting an error message
         this.errorMessage =
           error.response?.data?.detail ||
-          "Houve um problema ao submeter o formulário.";
+          "Houve um problema a submeter o formulário de registo.";
         console.error("Registration Error:", error);
       }
     },
   },
+
   created() {
     this.fetchCourses();
     document.title = "Registo";

@@ -61,41 +61,33 @@ class UserAndProfileRegistrationSerializer(serializers.Serializer):
     gender = serializers.ChoiceField(choices=StudentProfile.GENDER_CHOICES)
     data_consent = serializers.BooleanField()
     
+    def validate_username(self, value):
+        """Check if the username is numeric."""
+        if not value.isnumeric():
+            raise serializers.ValidationError("The username must be numeric.")
+        return value
+
     def create(self, validated_data):
-        # Check for Unique Username
+    # Check for Unique Username
         if User.objects.filter(username=validated_data["username"]).exists():
             raise serializers.ValidationError({"username": "This username is already in use."})
         
-        # Split User Data and Profile Data for Creation
-        user_data = {
-            "username": validated_data["username"],
-            "password": validated_data["password"],
-            "email": validated_data["email"],
-            "first_name": validated_data["first_name"],
-            "last_name": validated_data["last_name"],
-        }
+        user_data = {key: value for key, value in validated_data.items() if key in ['username', 'password', 'email', 'first_name', 'last_name']}
         
-        profile_data = {
-            "student_number": validated_data["username"],
-            "course": validated_data["course"],
-            "age": validated_data["age"],
-            "gender": validated_data["gender"],
-            "data_consent": validated_data["data_consent"],
-        }
+        # Assuming username is used as student_number
+        profile_data = {key: value for key, value in validated_data.items() if key not in user_data}
+        profile_data['student_number'] = validated_data['username']  # Set student_number explicitly
         
         # Create User Instance and Set Password
         user = User(**user_data)
         user.set_password(user_data["password"])
         user.is_active = False
-        user.is_student = True
         user.save()
         
         # Create Student Profile Linked to User
-        profile = StudentProfile(user=user, **profile_data)
-        profile.save()
+        StudentProfile.objects.create(user=user, **profile_data)
 
         return user
-
 
 # Redefining Course Serializer for Id and Name Fields
 class CourseSerializer(serializers.ModelSerializer):

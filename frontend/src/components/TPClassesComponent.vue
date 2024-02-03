@@ -172,8 +172,8 @@ export default {
       let url = "/api/questions/create_student_responses/";
       apiClient
         .post(url, studentQuestionnaireResponse)
-        .then((responses) => {
-          console.log("Responses successfully sent", responses);
+        .then(() => {
+          //console.log("Responses successfully sent", responses);
           this.$store.dispatch(
             "markQuestionnaireAsAnswered",
             this.currentQuestionnaireId
