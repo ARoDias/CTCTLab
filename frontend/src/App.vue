@@ -12,7 +12,8 @@
       <h1 style="text-align: center">
         Competências Transversais para Ciências e Tecnologia
       </h1>
-
+      <!-- Main title of the application : colocar lingua do site no Vuex e depois fazer o título mudar dinamicamente -->
+      <h1 style="text-align: center">Soft Skills for Science and Technology</h1>
       <!-- Navigation bar component, listening to the logout event -->
       <NavbarComponent @logout="logOut"></NavbarComponent>
     </header>

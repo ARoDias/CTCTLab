@@ -25,6 +25,7 @@ class Command(BaseCommand):
             'Engenharia do Ambiente',
             'Bioquímica',
             'Biologia Celular e Molecular',
+            'Outro',
         ]
 
         for course_name in course_names:
