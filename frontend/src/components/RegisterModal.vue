@@ -6,13 +6,19 @@
     @update:isVisible="handleVisibilityChange"
   >
     <template #header>
-      <h5 class="modal-title">Registo do Aluno</h5>
+      <h5 class="modal-title">
+        FORMULÁRIO DE REGISTO<br />
+        Registration Form
+      </h5>
     </template>
 
     <template #default>
       <form method="POST" @submit.prevent="submitRegister" class="form-group">
         <div class="field-group">
-          <label for="username">Número de Aluno:</label>
+          <label for="username"
+            >NÚMERO DE ALUNO <br />
+            Student Number</label
+          >
           <input
             type="text"
             id="username"
@@ -21,7 +27,7 @@
             autocomplete="username"
           />
 
-          <label for="email">Email:</label>
+          <label for="email">EMAIL</label>
           <input
             type="email"
             id="email"
@@ -33,7 +39,7 @@
 
         <div class="field-group">
           <div class="formfield">
-            <label for="password1">Senha:</label>
+            <label for="password1">SENHA <br />Password</label>
             <input
               type="password"
               id="password1"
@@ -45,13 +51,15 @@
             />
           </div>
           <div class="formfield">
-            <label for="password2">Confirmação da senha:</label>
+            <label for="password2"
+              >CONFIRMAÇÃO DE SENHA <br />Password Confirmation</label
+            >
             <input
               type="password"
               id="password2"
               v-model="password2"
               pattern=".{8,}"
-              title="Deve conter pelo menos 8 caracteres"
+              title="Deve conter pelo menos 8 caracteres - Should contain at least 6 chars!"
               required
               autocomplete="asdasdasd"
             />
@@ -63,7 +71,7 @@
             <input
               type="text"
               class="form-control"
-              placeholder="Primeiro Nome"
+              placeholder="Nome"
               aria-label="First name"
               id="first_name"
               v-model="first_name"
@@ -87,7 +95,7 @@
 
         <div class="field-group">
           <div class="formfield">
-            <label for="course">Curso: </label>
+            <label for="course">CURSO <br />Course</label>
             <select id="course" v-model="course" required>
               <option disabled value="">Escolhe um curso</option>
               <option
@@ -102,10 +110,13 @@
 
           <div class="field-group">
             <div class="formfield">
-              <label for="age">Idade:</label>
+              <label for="age"
+                >IDADE<br />
+                Age</label
+              >
               <input type="number" id="age" v-model="age" required />
             </div>
-            <label for="gender">Género: </label><br />
+            <label for="gender">GÉNERO <br />Gender </label><br />
             <input
               type="radio"
               id="feminino"
@@ -113,7 +124,7 @@
               value="F"
               v-model="gender"
             />
-            <label for="feminino">Feminino</label><br />
+            <label for="feminino"> Feminino (Female) </label><br />
             <input
               type="radio"
               id="masculino"
@@ -121,7 +132,7 @@
               value="M"
               v-model="gender"
             />
-            <label for="masculino">Masculino</label><br />
+            <label for="masculino"> Masculino (Male) </label><br />
             <input
               type="radio"
               id="outro"
@@ -129,7 +140,7 @@
               value="O"
               v-model="gender"
             />
-            <label for="outro">Outro / Prefiro não dizer</label>
+            <label for="outro"> Prefiro não dizer (I rather not say)</label>
           </div>
         </div>
 
@@ -141,15 +152,21 @@
               v-model="data_consent"
               required
             />
-            Concordo com a
-            <a href="#" @click.prevent="openPrivacyPolicy">recolha de dados</a>
+            Eu concordo com a
+            <a href="#" @click.prevent="openPrivacyPolicy"
+              >política de privacidade.</a
+            ><br />
+            (I agree with the
+            <a href="#" @click.prevent="openPrivacyPolicy">Privacy Policy)</a>
           </label>
         </div>
         <div v-if="errorMessage" class="error-message">
           {{ errorMessage }}
         </div>
         <div class="submit-button">
-          <button class="btn btn-primary" type="submit">Registar</button>
+          <button class="btn btn-primary" type="submit">
+            REGISTAR / Register
+          </button>
         </div>
       </form>
 
@@ -226,7 +243,8 @@ export default {
     async submitRegister() {
       this.errorMessage = null;
       if (this.password1 !== this.password2) {
-        this.errorMessage = "As passwords não são iguais.";
+        this.errorMessage =
+          "As passwords não são iguais. Passwords don't match.";
         return;
       }
       if (!/^\d+$/.test(this.username)) {
@@ -255,7 +273,12 @@ export default {
         if (response.status === 201) {
           // Handle success, for example, showing a success message
           // and/or redirecting the user
-          console.log("Registration successful", response.data);
+          alert(
+            "A coordenação de CTCT agradece o seu registo. Por favor, proceda à ativação da conta através do link que recebeu no e-mail antes de realizar o login."
+          );
+          alert(
+            "The CTCT coordination thanks you for registering. Please activate your account using the link you received in the email before logging in."
+          );
           // Reset form or redirect user here
           this.closeModal(); // Assuming you have a method to close the modal
         }

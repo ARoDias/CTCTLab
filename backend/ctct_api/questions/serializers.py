@@ -10,7 +10,7 @@ from .models import (Activity, Week, #ActivityParticipation, ActivityAttempt,
                      Question, Option, Questionnaire, #Answer, 
                      QuestionResponseDetail, StudentQuestionnaireResponse, ActivityInstance)
 #from users.serializers import TeacherProfileSerializer, StudentProfileSerializer
-from users.models import StudentProfile
+from users.models import StudentProfile, Classroom
 # Serializer for the Week model
 class WeekSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,15 +27,23 @@ class ActivitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ActivityInstanceSerializer(serializers.ModelSerializer):
-    # Assuming fields for ActivityInstance model. Update as per your model's fields.
-    activity = serializers.PrimaryKeyRelatedField(read_only=True)
-    start_time = serializers.DateTimeField()
-    end_time = serializers.DateTimeField()
-    is_active = serializers.BooleanField()
+    classrooms = serializers.PrimaryKeyRelatedField(queryset=Classroom.objects.all(), many=True)
 
     class Meta:
         model = ActivityInstance
-        fields = ['id', 'activity', 'start_time', 'end_time', 'is_active']
+        fields = ['id', 'activity', 'classrooms', 'start_time', 'end_time', 'is_active']
+
+    def create(self, validated_data):
+        classrooms = validated_data.pop('classrooms')
+        activity_instance = ActivityInstance.objects.create(**validated_data)
+        activity_instance.classrooms.set(classrooms)
+        return activity_instance
+
+    def update(self, instance, validated_data):
+        if 'classrooms' in validated_data:
+            classrooms = validated_data.pop('classrooms')
+            instance.classrooms.set(classrooms)
+        return super().update(instance, validated_data)
 
 # Serializer for the ActivityAttempt model
 # class ActivityAttemptSerializer(serializers.ModelSerializer):
@@ -101,15 +109,20 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 # Serializer for the Questionnaire model
 class QuestionnaireSerializer(serializers.ModelSerializer):
-    questions = serializers.SerializerMethodField()
+    week = serializers.SerializerMethodField()
+    is_active = serializers.SerializerMethodField()
 
     class Meta:
         model = Questionnaire
-        fields = ['id', 'title', 'description', 'activity', 'questions']
+        fields = ['id', 'title', 'description', 'activity', 'questions', 'week', 'is_active']
 
-    def get_questions(self, obj):
-        # Return a list of question IDs associated with the questionnaire
-        return obj.questions.values_list('id', flat=True)
+    def get_week(self, obj):
+        return obj.activity.week.number if obj.activity.week else None
+
+    def get_is_active(self, obj):
+        activity_instances = ActivityInstance.objects.filter(activity=obj.activity)
+        return any(instance.is_active for instance in activity_instances)
+
 
 # Serializer for the Answer model
 """ class AnswerSerializer(serializers.ModelSerializer):

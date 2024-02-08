@@ -31,20 +31,20 @@
 
       <!-- Link for TP Classes page if user is a student -->
       <template v-if="userAuthenticated && isStudent">
-        <li class="nav-item">
+        <div class="nav-item">
           <router-link to="/tp-classes" class="nav-link fs-6"
             >Aulas TP</router-link
           >
-        </li>
+        </div>
       </template>
 
       <!-- Link for Teacher Dashboard if user is a teacher -->
       <template v-if="userAuthenticated && isTeacher">
-        <li class="nav-item">
+        <div class="nav-item">
           <router-link to="/quizzDashboard" class="nav-link fs-6"
-            >Teacher Dashboard</router-link
+            >Dashboard do Docente</router-link
           >
-        </li>
+        </div>
       </template>
 
       <!-- Authentication related links -->

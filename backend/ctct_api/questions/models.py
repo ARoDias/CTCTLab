@@ -26,13 +26,13 @@ class Activity(models.Model):
 # ActivityInstance model
 class ActivityInstance(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    classroom = models.ForeignKey('users.Classroom', on_delete=models.CASCADE)
+    classrooms = models.ManyToManyField('users.Classroom')
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.activity.title} in {self.classroom.name}"
+        return f"{self.activity.title} in {', '.join(classroom.name for classroom in self.classrooms.all())}"
 
 class Questionnaire(models.Model):
     # Title of the questionnaire, indexed for efficient searching

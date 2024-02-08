@@ -259,3 +259,35 @@ input[type="submit"]:hover {
   /* Additional styles to ensure responsiveness across devices */
   width: 80%; /* You can adjust this percentage based on your design preference */
 }
+
+/* Adicione estilos específicos para dispositivos móveis */
+@media (max-width: 768px) {
+  /* Ajuste o padding do formulário para garantir que ele caiba dentro do modal */
+  form {
+    padding: 10px; /* Reduza o padding se necessário */
+  }
+
+  /* Ajuste a largura dos inputs para garantir que eles não excedam a largura do modal */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  select {
+    width: calc(
+      100% - 24px
+    ); /* Ajuste a subtração de acordo com o padding desejado */
+    box-sizing: border-box; /* Garante que o padding seja incluído no cálculo da largura */
+  }
+
+  /* Certifique-se de que os .formfield não ultrapassem a largura do modal */
+  .formfield {
+    display: block; /* Em vez de table, para que cada campo ocupe sua própria linha */
+    width: 100%; /* Ajuste a largura para preencher o espaço disponível */
+  }
+
+  /* Ajuste o tamanho dos elementos .row e .col para dispositivos móveis */
+  .row,
+  .col {
+    width: 100%; /* Garante que eles ocupem toda a largura disponível */
+    padding: 0; /* Remova o padding para evitar que os elementos saiam para fora do modal */
+  }
+}

@@ -20,3 +20,25 @@ media/
 
 # Pasta estática - gerada com 'collectstatic'
 static/
+backend/venv/Lib/site-packages/dotenv/main.py
+backend/venv/Lib/site-packages/dotenv/version.py
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/entry_points.txt
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/INSTALLER
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/LICENSE
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/METADATA
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/RECORD
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/REQUESTED
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/top_level.txt
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/WHEEL
+backend/venv/Scripts/dotenv.exe
+backend/venv/Lib/site-packages/dotenv/main.py
+backend/venv/Lib/site-packages/dotenv/version.py
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/entry_points.txt
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/INSTALLER
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/LICENSE
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/METADATA
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/RECORD
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/REQUESTED
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/top_level.txt
+backend/venv/Lib/site-packages/python_dotenv-1.0.0.dist-info/WHEEL
+backend/venv/Scripts/dotenv.exe

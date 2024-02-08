@@ -11,7 +11,8 @@ import "./axiosConfig";
 
 // Set the baseURL for axios
 axios.defaults.baseURL = "https://throbbing-river-82258.pktriot.net";
-
+//axios.defaults.baseURL ="https://78ec-2a01-14-8020-7e20-e9d2-9197-151a-7ef.ngrok-free.app";
+//axios.defaults.baseURL = "http://127.0.0.1:8000/";
 // Create the Vue app
 const app = createApp(App);
 

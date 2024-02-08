@@ -1,13 +1,10 @@
 <!-- components/NotFound.vue -->
 <template>
-    <div class="card">
-      <h1>Not Found</h1>
-    </div>
-  </template>
-  
-  <script>
-  export default {
+  <div class="card">
+    <h4>Página não encontrada - Not Found</h4>
+  </div>
+</template>
 
-  }
-  </script>
-  
+<script>
+export default {};
+</script>

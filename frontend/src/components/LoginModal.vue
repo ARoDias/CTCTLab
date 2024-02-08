@@ -6,14 +6,16 @@
   >
     <template #header>
       <!-- Conteúdo personalizado para o cabeçalho do modal -->
-      <h5 class="modal-title">Login de Utilizador</h5>
+      <h5 class="modal-title">LOGIN</h5>
     </template>
 
     <template #default>
       <!-- Corpo principal do modal, contendo o formulário de login -->
       <form @submit.prevent="submitLogin">
         <div class="form-group">
-          <label for="username">Username (número de aluno):</label>
+          <label for="username"
+            >USERNAME (Número de aluno) (Student number)</label
+          >
           <input
             type="text"
             id="username"
@@ -22,7 +24,7 @@
           />
         </div>
         <div class="form-group">
-          <label for="password">Senha/Password:</label>
+          <label for="password">SENHA (Password)</label>
           <input
             type="password"
             id="password"
@@ -31,7 +33,7 @@
           />
         </div>
         <div class="submit-button">
-          <button class="btn btn-primary" type="submit">Login</button>
+          <button class="btn btn-primary" type="submit">LOGIN</button>
         </div>
       </form>
       <div v-if="errorMessage" class="alert alert-danger">

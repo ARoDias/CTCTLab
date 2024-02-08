@@ -17,8 +17,6 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-from django.db import models
-
 # Define as opções para o tipo de classe
 class ClassroomType(models.TextChoices):
     TP = 'TP', 'Teórico-Prática'
@@ -66,14 +64,13 @@ class StudentProfile(models.Model):
 
 # Extended model for Teacher with related fields
 class TeacherProfile(models.Model):
-    # One-to-one relationship with User model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # Many-to-many relationship with Classroom model
-    classrooms = models.ManyToManyField(Classroom)
+    classrooms = models.ManyToManyField('Classroom') 
+    department = models.CharField(max_length=255, default='Unknown')
+    phone = models.CharField(max_length=20, default='Not provided')
 
     def __str__(self):
         return self.user.get_full_name()
-    
 
 # Model for student groups
 class StudentGroup(models.Model):
